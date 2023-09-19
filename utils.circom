@@ -1,17 +1,27 @@
 pragma circom 2.0.0;
 include "./node_modules/circomlib/circuits/comparators.circom";
 
-template NegativeCheck(maxBits){
+template NegativeCheck(){
     signal input in;
     signal output out;
 
-    component lessthan = LessThan(maxBits);
+    component lessthan = LessThan(252);
     lessthan.in[0] <== -1;
     lessthan.in[1] <== in;
     out <== lessthan.out;
 
 }
 
-template RangeCheck(){
+template RangeCheck(b){
+    //does not handle well inputs between 2**252 and 2**254
+    signal input in;
+    signal output out;
+    signal bits[254];
+    signal out2;
 
-}
+    var lc = 2**b;
+    
+    component less_than = LessThan(252);
+    less_than.in <== [in,lc];
+    out <== less_than.out;
+    }

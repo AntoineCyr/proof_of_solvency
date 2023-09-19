@@ -1,6 +1,7 @@
 pragma circom 2.0.0;
 include "./merkle.circom";
 include "./utils.circom";
+include "./node_modules/circomlib/circuits/comparators.circom";
 
 
 template sumMerkleTree(levels,inputs) {
@@ -13,16 +14,15 @@ template sumMerkleTree(levels,inputs) {
     signal output rootHash;
 
     signal output notNegative;
-    //signal output allSmallRange;
+    signal output allSmallRange;
 
     signal sumNodes[levels+1][inputs];
     signal hashNodes[levels+1][inputs];
 
-
     var levelSize = inputs;
     var nextLevelSize = 0;
-    //var maxBits = 200;
-    //var notBig = 0;
+    var maxBits = 100;
+    var tempNotBig = 0;
     var tempNotNegative = 0;
     
     component rangecheck[inputs];
@@ -32,15 +32,21 @@ template sumMerkleTree(levels,inputs) {
         hashNodes[0][i] <== emailHash[i];
         sumNodes[0][i] <== balance[i];
 
-        //rangecheck[i] = RangeCheck(maxBits);
-        negativecheck[i] = NegativeCheck(maxBits);
+        rangecheck[i] = RangeCheck(maxBits);
+        rangecheck[i].in <== balance[i];
+        tempNotBig = rangecheck[i].out + tempNotBig;
+
+        negativecheck[i] = NegativeCheck();
         negativecheck[i].in <== balance[i];
         tempNotNegative = negativecheck[i].out + tempNotNegative;
     }
-    
-    notNegative <== tempNotNegative;
-    notNegative === inputs;
+    component rangeEqual = IsEqual();
+    rangeEqual.in <== [inputs,tempNotBig];
+    allSmallRange <== rangeEqual.out;
 
+    component negativeEqual = IsEqual();
+    negativeEqual.in <== [inputs,tempNotNegative];
+    notNegative <== negativeEqual.out;
 
     component merklesum[levels][inputs];
     for (var i = 0; i < levels; i++) {
