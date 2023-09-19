@@ -21,8 +21,8 @@ template sumMerkleTree(levels,inputs) {
 
     var levelSize = inputs;
     var nextLevelSize = 0;
-    var maxBits = 200;
-    var notBig = 1;
+    //var maxBits = 200;
+    //var notBig = 0;
     var tempNotNegative = 0;
     
     component rangecheck[inputs];
