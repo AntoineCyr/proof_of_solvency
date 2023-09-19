@@ -1,4 +1,5 @@
 TODO
+
 PROOF OF SOLVENCY
 
 -handle number inputs != 2^n
@@ -11,5 +12,9 @@ PROOF OF SOLVENCY
 
 -Add comments and review the code architecture
 
+
+
+
 PROOF OF INCLUSION
+
 PROOF OF ASSET
