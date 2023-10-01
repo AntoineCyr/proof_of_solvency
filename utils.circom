@@ -25,3 +25,20 @@ template RangeCheck(b){
     less_than.in <== [in,lc];
     out <== less_than.out;
     }
+
+template IfThenElse() {
+    signal input cond;
+    signal input L;
+    signal input R;
+    signal output out;
+
+    out <== cond * (L - R) + R;
+}
+
+template AND() {
+    signal input a;
+    signal input b;
+    signal output out;
+
+    out <== a*b;
+}
