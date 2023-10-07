@@ -14,7 +14,10 @@ class MerkleTree {
     let current_zero_value = zero_value || 0
     this.zero_values.push(current_zero_value)
     for (let i = 0; i < n_levels; i++) {
+        console.log(i)
+        console.log(current_zero_value)
       current_zero_value = this.hasher.hash(i, current_zero_value, current_zero_value)
+      console.log(current_zero_value)
       this.zero_values.push(
         current_zero_value.toString(),
       )

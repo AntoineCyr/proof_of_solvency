@@ -1,13 +1,14 @@
-const circomlib = require('circomlib')
-const mimcsponge = circomlib.mimcsponge
-const snarkjs = require('snarkjs')
+/* global BigInt */
+const circomlibjs = require("circomlibjs");
 
-const bigInt = snarkjs.bigInt
 
 class MimcSpongeHasher {
   hash(level, left, right) {
-    return mimcsponge.multiHash([bigInt(left), bigInt(right)]).toString()
+    circomlibjs.buildMimcSponge().then((mimicsponge) => {
+        console.log("here2")
+      return mimicsponge.multiHash([bigInt(left), bigInt(right)],0,1)[0].toString();
+    });
   }
 }
 
-module.exports = MimcSpongeHasher
+module.exports = MimcSpongeHasher;
