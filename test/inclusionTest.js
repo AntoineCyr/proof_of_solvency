@@ -12,14 +12,16 @@ describe("inclusion", () => {
         num_constraints = circ.constraints.length;
         console.log("Liabilities #Constraints:", num_constraints, "Expected:", "?"); */
     });
+    //Compare tree as inputs or build tree inside
+    //use path as private input instead of list of all balances
      it("case I OK", async () => {
         const input = {
-            "balance": ["10", "11","12","13"],
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],
-            "sum": "46",
-            "rootHash": "1925011364609672314997423740918945504928475937983787094612250833114331232382",
-            "userBalance": "11",
-            "userEmailHash": "10566265",
+            "balance": ["10", "11","12","13"],//private
+            "emailHash": ["11672136", "10566265","3423253245","5342523"],//private
+            "sum": "46",//public
+            "rootHash": "1925011364609672314997423740918945504928475937983787094612250833114331232382",//public
+            "userBalance": "11",//public
+            "userEmailHash": "10566265",//public
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);

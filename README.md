@@ -1,6 +1,6 @@
 TODO
 
-PROOF OF SOLVENCY
+PROOF OF LIABILITIES
 
 -handle number inputs != 2^n
 
@@ -11,7 +11,6 @@ PROOF OF SOLVENCY
 -Generation of proof
 
 -Add comments and review the code architecture
-
 
 
 
