@@ -67,7 +67,7 @@ template sumMerkleTree(levels,inputs) {
         nextLevelSize = 0;
     }
     sum <== sumNodes[levels][0];
-    rootHash <== hashNodes[levels-1][0]; 
+    rootHash <== hashNodes[levels][0]; 
 }
 
 component main = sumMerkleTree(2,4);

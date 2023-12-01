@@ -9,7 +9,7 @@ template MerkleSum() {
     signal output root;
     signal output sum;
 
-    component hasher = MiMCSponge(4, 2, 1);
+    component hasher = MiMCSponge(4, 220, 1);
     hasher.ins[0] <== L;
     hasher.ins[1] <== R;
     hasher.ins[2] <== sumL;
@@ -17,5 +17,13 @@ template MerkleSum() {
     hasher.k <== 0;
     root <== hasher.outs[0];
     sum <== sumL + sumR;
+
+    log("MerkleSum");
+    log(L);
+    log(R);
+    log(sumL);
+    log(sumR);
+    log(root);
+    log(sum);
 }
 
