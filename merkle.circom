@@ -17,13 +17,5 @@ template MerkleSum() {
     hasher.k <== 0;
     root <== hasher.outs[0];
     sum <== sumL + sumR;
-
-    log("MerkleSum");
-    log(L);
-    log(R);
-    log(sumL);
-    log(sumR);
-    log(root);
-    log(sum);
 }
 

@@ -13,7 +13,7 @@ describe("liabilities", () => {
         console.log("Liabilities #Constraints:", num_constraints, "Expected:", "?"); */
     });
     
-
+    //Compare tree as inputs or build tree inside
      it("case I OK", async () => {
         const input = {
             "balance": ["10", "11","12","13"],
@@ -23,9 +23,7 @@ describe("liabilities", () => {
         await circ.checkConstraints(witness);
         await circ.assertOut(witness, {"sum": "46", "rootHash": "11346658973375961332326525800941704040239142415932845440524726524725202286597","notNegative":"1","allSmallRange":"1"});
     }); 
-    //1925011364609672314997423740918945504928475937983787094612250833114331232382
-    //13432114314652191793011316455173216234351310458149148012121442038248137232542
-    /*
+    
     it("case II Negative", async () => {
         const input = {
             "balance": ["-10", "11","12","13"],
@@ -33,7 +31,7 @@ describe("liabilities", () => {
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"sum": "26", "rootHash": "9447252380650637689610906684495286616391799236533218562511697775482934690331","notNegative":"0","allSmallRange":"1"});
+        await circ.assertOut(witness, {"sum": "26", "rootHash": "5895925909654415104931655394104674186092723093092091960387529796108826570695","notNegative":"0","allSmallRange":"1"});
     }); 
 
     it("case III BigInt", async () => {
@@ -43,7 +41,6 @@ describe("liabilities", () => {
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"sum": "12676506002282294019603205317128", "rootHash": "472361104794911560238043263374509561579994270732052119684567515083505259026","notNegative":"1","allSmallRange":"0"});
+        await circ.assertOut(witness, {"sum": "12676506002282294019603205317128", "rootHash": "18385685220892903645862822916010859808752020528765474984030623593947921934339","notNegative":"1","allSmallRange":"0"});
     }); 
-    */
 });

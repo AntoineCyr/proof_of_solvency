@@ -42,3 +42,17 @@ template AND() {
 
     out <== a*b;
 }
+
+template Switcher() {
+    signal input sel;
+    signal input L;
+    signal input R;
+    signal output outL;
+    signal output outR;
+
+    signal aux;
+
+    aux <== (R-L)*sel;
+    outL <==  aux + L;
+    outR <== -aux + R;
+}

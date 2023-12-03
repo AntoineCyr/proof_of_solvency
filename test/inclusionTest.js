@@ -12,12 +12,12 @@ describe("inclusion", () => {
         num_constraints = circ.constraints.length;
         console.log("Liabilities #Constraints:", num_constraints, "Expected:", "?"); */
     });
-    //Compare tree as inputs or build tree inside
     //use path as private input instead of list of all balances
      it("case I OK", async () => {
         const input = {
-            "balance": ["10", "11","12","13"],//private
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],//private
+            "neighborsSum": ["10","25"],//private
+            "neighborsHash": ["11672136","4811434667398150016357199712138626920529027819147804819192874884729019971979"],//private
+            "neighborsBinary": ["1","0"],//private
             "sum": "46",//public
             "rootHash": "11346658973375961332326525800941704040239142415932845440524726524725202286597",//public
             "userBalance": "11",//public
@@ -25,59 +25,37 @@ describe("inclusion", () => {
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"inMerkleTree":"1","validMerkleTree":"1"});
+        await circ.assertOut(witness, {"inMerkleTree":"1"});
     }); 
 
-    it("case II not included", async () => {
+    it("case II wrong rootHash", async () => {
         const input = {
-            "balance": ["10", "11","12","13"],
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],
-            "sum": "46",
-            "rootHash": "11346658973375961332326525800941704040239142415932845440524726524725202286597",
-            "userBalance": "11",
-            "userEmailHash": "10566265123",
+            "neighborsSum": ["10","25"],//private
+            "neighborsHash": ["11672136","4811434667398150016357199712138626920529027819147804819192874884729019971979"],//private
+            "neighborsBinary": ["1","0"],//private
+            "sum": "46",//public
+            "rootHash": "434667398150016357199712138626920529027819147804819192874884729019971979",//public
+            "userBalance": "11",//public
+            "userEmailHash": "10566265",//public
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"inMerkleTree":"0","validMerkleTree":"1"});  }); 
+        await circ.assertOut(witness, {"inMerkleTree":"0"});
+    }); 
 
-    it("case III wrong balance", async () => {
+    it("case III another user", async () => {
         const input = {
-            "balance": ["10", "11","12","13"],
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],
-            "sum": "46",
-            "rootHash": "11346658973375961332326525800941704040239142415932845440524726524725202286597",
-            "userBalance": "13",
-            "userEmailHash": "10566265",
+            "neighborsSum": ["10","25"],//private
+            "neighborsHash": ["11672136","4811434667398150016357199712138626920529027819147804819192874884729019971979"],//private
+            "neighborsBinary": ["1","0"],//private
+            "sum": "46",//public
+            "rootHash": "434667398150016357199712138626920529027819147804819192874884729019971979",//public
+            "userBalance": "11",//public
+            "userEmailHash": "214823",//public
         };
         const witness = await circ.calculateWitness(input, 1);
         await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"inMerkleTree":"0","validMerkleTree":"1"});}); 
-
-    it("case IV sum not valid", async () => {
-        const input = {
-            "balance": ["10", "11","12","13"],
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],
-            "sum": "200",
-            "rootHash": "11346658973375961332326525800941704040239142415932845440524726524725202286597",
-            "userBalance": "11",
-            "userEmailHash": "10566265",
-        };
-        const witness = await circ.calculateWitness(input, 1);
-        await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"inMerkleTree":"1","validMerkleTree":"0"});}); 
-
-    it("case V merkle root not valid", async () => {
-        const input = {
-            "balance": ["10", "11","12","13"],
-            "emailHash": ["11672136", "10566265","3423253245","5342523"],
-            "sum": "46",
-            "rootHash": "1925011364609672314997423740918945504937983787094612250833114331232382",
-            "userBalance": "11",
-            "userEmailHash": "10566265",
-        };
-        const witness = await circ.calculateWitness(input, 1);
-        await circ.checkConstraints(witness);
-        await circ.assertOut(witness, {"inMerkleTree":"1","validMerkleTree":"0"});}); 
+        await circ.assertOut(witness, {"inMerkleTree":"0"});
+    }); 
 
 });

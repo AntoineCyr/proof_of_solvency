@@ -45,6 +45,7 @@ class MerkleTree {
       levelSize = nextLevelSize;
       nextLevelSize = 0;
     }
+    console.log(hashNodes)
     return [hashNodes[levels][0], sumNodes[levels][0]];
   }
 }
