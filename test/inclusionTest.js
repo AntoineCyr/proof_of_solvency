@@ -1,5 +1,5 @@
 const path = require("path");
-const assert = require("chai").assert;
+//const assert = require("chai").assert;
 const wasm_tester = require("circom_tester").wasm;
 
 describe("inclusion", () => {
