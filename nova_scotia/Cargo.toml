@@ -1,12 +1,11 @@
 [package]
-name = "nova"
+name = "nova_scotia"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nova_scotia = { path = "../nova_scotia" }
 anyhow = "1.0.65"
 bellperson = { version = "0.25", default-features = false }
 byteorder = "1.4.3"

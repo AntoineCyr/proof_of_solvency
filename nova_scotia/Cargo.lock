@@ -655,25 +655,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "nova"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bellperson",
- "byteorder",
- "ff",
- "hex-literal",
- "itertools 0.9.0",
- "nova-snark",
- "nova_scotia",
- "num-bigint 0.4.4",
- "num-traits",
- "pasta_curves",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "nova-snark"
 version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
