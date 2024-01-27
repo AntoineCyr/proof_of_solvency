@@ -131,7 +131,6 @@ impl<'a, Fr: PrimeField> CircomCircuit<Fr> {
                 |_| make_lc(constraint.2.clone()),
             );
         }
-
         for i in (pub_output_count + 1)..self.r1cs.num_inputs {
             cs.enforce(
                 || format!("pub input enforce {}", i),

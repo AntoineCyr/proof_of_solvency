@@ -3,7 +3,7 @@
 pragma circom 2.0.0;
 include "./merkle.circom";
 include "./utils.circom";
-include "./node_modules/circomlib/circuits/comparators.circom";
+include "../node_modules/circomlib/circuits/comparators.circom";
 
 
 template inclusion(levels) {
@@ -12,11 +12,17 @@ template inclusion(levels) {
     signal input neighborsSum[levels];
     signal input neighborsHash[levels];
     signal input neighborsBinary[levels];
+    signal input step_in[5];
     signal input sum;
     signal input rootHash;
     signal input userBalance;
     signal input userEmailHash;
-    signal output inMerkleTree;
+    signal inMerkleTree <== step_in[0];
+    signal output step_out[5];
+    step_out[1] <== sum;
+    step_out[2] <== rootHash;
+    step_out[3] <== userBalance;
+    step_out[4] <== userEmailHash;
 
     signal sumNodes[levels+1];
     signal hashNodes[levels+1];
@@ -61,8 +67,9 @@ template inclusion(levels) {
     sumEqual.in <== [sumNodes[levels],sum];
     validSum <== sumEqual.out;
     
-    inMerkleTree <== validSum * validHash;
+    signal inMerkleTreeAndValidSum <== validSum * inMerkleTree;
+    step_out[0] <== inMerkleTree * validHash;
 
 }
 
-component main = inclusion(2);
+component main {public [step_in]}= inclusion(2);

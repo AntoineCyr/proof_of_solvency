@@ -101,6 +101,8 @@ fn load_witness_from_json<Fr: PrimeField, R: Read>(reader: R) -> Vec<Fr> {
 
 /// load witness from bin file by filename
 pub fn load_witness_from_bin_file<Fr: PrimeField>(filename: &Path) -> Vec<Fr> {
+    println!("HERE");
+    println!("{}", filename.display());
     let reader = OpenOptions::new()
         .read(true)
         .open(filename)
@@ -179,6 +181,7 @@ where
         FileLocation::PathBuf(filename) => filename,
         FileLocation::URL(_) => panic!("unreachable"),
     };
+
     if filename.ends_with("json") {
         load_r1cs_from_json_file(filename)
     } else {
