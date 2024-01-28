@@ -142,26 +142,51 @@ fn main() {
     let root = current_dir().unwrap();
 
     let circuit_file = root.join(circuit_filepath);
-    println!("here1");
     println!("{:?}", circuit_file);
     let r1cs = load_r1cs::<G1, G2>(&FileLocation::PathBuf(circuit_file));
-    println!("here4");
 
     //let pp = create_public_params::<G1, G2>(r1cs.clone());
     let pp: PublicParams<G1, G2, _, _> = create_public_params(r1cs.clone());
 
-    println!("here5");
-
     let mut private_inputs = Vec::new();
     for i in 0..iteration_count {
         let mut private_input = HashMap::new();
-        private_input.insert("adder".to_string(), json!(i));
+        private_input.insert(
+            "neighborsSum".to_string(),
+            json!(["10".to_string(), "25".to_string()]),
+        );
+        private_input.insert(
+            "neighborsHash".to_string(),
+            json!([
+                "11672136".to_string(),
+                "4811434667398150016357199712138626920529027819147804819192874884729019971979"
+                    .to_string(),
+            ]),
+        );
+        private_input.insert(
+            "neighborsBinary".to_string(),
+            json!(["1".to_string(), "0".to_string()]),
+        );
+        private_input.insert("sum".to_string(), json!("46".to_string()));
+        private_input.insert(
+            "rootHash".to_string(),
+            json!(
+                "11346658973375961332326525800941704040239142415932845440524726524725202286597"
+                    .to_string()
+            ),
+        );
+        private_input.insert("userBalance".to_string(), json!("11".to_string()));
+        private_input.insert("userEmailHash".to_string(), json!("10566265".to_string()));
         private_inputs.push(private_input);
     }
 
-    println!("here6");
-
-    let start_public_input = [F::<G1>::from(10), F::<G1>::from(10)];
+    let start_public_input = [
+        F::<G1>::from(1),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+    ];
     println!("private inputs{:?}", private_inputs);
     println!("public inputs{:?}", start_public_input);
 
