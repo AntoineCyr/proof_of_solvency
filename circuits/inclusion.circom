@@ -12,13 +12,12 @@ template inclusion(levels) {
     signal input neighborsSum[levels];
     signal input neighborsHash[levels];
     signal input neighborsBinary[levels];
-    signal input step_in[5];
+    signal input step_in[13];
     signal input sum;
     signal input rootHash;
     signal input userBalance;
     signal input userEmailHash;
-    signal inMerkleTree <== step_in[0];
-    signal output step_out[5];
+    signal output step_out[13];
     step_out[1] <== sum;
     step_out[2] <== rootHash;
     step_out[3] <== userBalance;
@@ -26,8 +25,6 @@ template inclusion(levels) {
 
     signal sumNodes[levels+1];
     signal hashNodes[levels+1];
-    signal rootHashCalc;
-    signal sumCalc;
     signal validHash;
     signal validSum;
     sumNodes[0] <== userBalance;
@@ -67,8 +64,17 @@ template inclusion(levels) {
     sumEqual.in <== [sumNodes[levels],sum];
     validSum <== sumEqual.out;
     
-    signal inMerkleTreeAndValidSum <== validSum * inMerkleTree;
-    step_out[0] <== inMerkleTree * validHash;
+    //signal inMerkleTreeAndValidSum <== validSum * inMerkleTree;
+    //step_out[0] <== inMerkleTree * validHash;
+    step_out[0] <== validSum * validHash;
+    step_out[5] <== validSum;
+    step_out[6] <== validHash;
+    step_out[7] <== sumNodes[0];
+    step_out[8] <== sumNodes[1];
+    step_out[9] <== sumNodes[2];
+    step_out[10] <== hashNodes[0];
+    step_out[11] <== hashNodes[1];
+    step_out[12] <== hashNodes[2];
 
 }
 

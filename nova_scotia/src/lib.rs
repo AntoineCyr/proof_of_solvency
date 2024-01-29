@@ -132,11 +132,7 @@ where
     let input_json = serde_json::to_string(&input).unwrap();
 
     if is_wasm {
-        generate_witness_from_wasm::<F<G1>>(
-            &witness_generator_file,
-            &input_json,
-        )
-        .await
+        generate_witness_from_wasm::<F<G1>>(&witness_generator_file, &input_json).await
     } else {
         let root = current_dir().unwrap(); // compute path only when generating witness from a binary
         let witness_generator_output = root.join("circom_witness.wtns");
@@ -215,6 +211,7 @@ where
             .iter()
             .map(|&x| format!("{:?}", x).strip_prefix("0x").unwrap().to_string())
             .collect();
+        println!("public input: {:?}", current_public_input);
 
         let res = recursive_snark.prove_step(
             &pp,
@@ -242,7 +239,6 @@ where
     G1: Group<Base = <G2 as Group>::Scalar>,
     G2: Group<Base = <G1 as Group>::Scalar>,
 {
-
     let iteration_count = private_inputs.len();
 
     let start_public_input_hex = start_public_input
