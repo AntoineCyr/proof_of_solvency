@@ -45,21 +45,31 @@ class MerkleTree {
       levelSize = nextLevelSize;
       nextLevelSize = 0;
     }
-    console.log(hashNodes)
+    console.log(hashNodes);
     return [hashNodes[levels][0], sumNodes[levels][0]];
   }
 }
-async function main(){
-    const merkleTree = new MerkleTree();
-    await merkleTree.getMimic();
-    let outputs = await merkleTree.getRoot(
-      [10, 11, 12, 13],
-      [11672136, 10566265, 3423253245, 5342523],
-      2,
-      4
-    );
-    console.log(outputs[0]);
-    console.log(outputs[1]);
+async function main() {
+  const merkleTree = new MerkleTree();
+  await merkleTree.getMimic();
+
+  let outputs = await merkleTree.getRoot(
+    [10, 11, 12, 13],
+    [11672136, 10566265, 3423253245, 5342523],
+    2,
+    4
+  );
+  console.log(outputs[0]);
+  console.log(outputs[1]);
+
+  outputs = await merkleTree.getRoot(
+    [10, 15, 12, 13],
+    [11672136, 19573022, 3423253245, 5342523],
+    2,
+    4
+  );
+  console.log(outputs[0]);
+  console.log(outputs[1]);
 }
 
-main()
+main();

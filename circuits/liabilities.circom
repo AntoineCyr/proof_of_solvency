@@ -70,4 +70,4 @@ template sumMerkleTree(levels,inputs) {
     rootHash <== hashNodes[levels][0]; 
 }
 
-component main = sumMerkleTree(2,4);
+component main = sumMerkleTree(6,64);

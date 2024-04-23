@@ -8,9 +8,9 @@ describe("inclusion", () => {
 
   before(async () => {
     circ = await wasm_tester(circ_file);
-    /* await circ.loadConstraints();
-        num_constraints = circ.constraints.length;
-        console.log("Liabilities #Constraints:", num_constraints, "Expected:", "?"); */
+    await circ.loadConstraints();
+    num_constraints = circ.constraints.length;
+    console.log("Liabilities #Constraints:", num_constraints);
   });
   //use path as private input instead of list of all balances
   //input: previous data, output now data

@@ -2,3 +2,5 @@
 package*
 /nova/target
 /nova_scotia/target
+*.ptau
+*.ptau.*
