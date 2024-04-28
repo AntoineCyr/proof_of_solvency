@@ -1,14 +1,11 @@
-//inputs, merkle root, 
-
 pragma circom 2.0.0;
 include "./merkle.circom";
 include "./utils.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 
-
+// Define a template for inclusion proof circuit
 template inclusion(levels) {
-    //number of inputs need to be == 2^n
-    
+    // Define inputs
     signal input neighborsSum[levels];
     signal input neighborsHash[levels];
     signal input neighborsBinary[levels];
@@ -17,23 +14,28 @@ template inclusion(levels) {
     signal input rootHash;
     signal input userBalance;
     signal input userEmailHash;
+
+    // Define outputs
     signal output step_out[5];
     step_out[1] <== sum;
     step_out[2] <== rootHash;
     step_out[3] <== userBalance;
     step_out[4] <== userEmailHash;
 
+    // Initialize sum and hash nodes
     signal sumNodes[levels+1];
     signal hashNodes[levels+1];
-    signal validHash;
-    signal validSum;
     sumNodes[0] <== userBalance;
     hashNodes[0] <== userEmailHash;
 
+    // Define switchers and Merkle sum components
     component switcherHash[levels];
     component switcherSum[levels];
     component merklesum[levels];
-    for  (var i = 0; i<levels; i++){
+
+    // Iterate through each level
+    for (var i = 0; i < levels; i++) {
+        // Connect switchers and Merkle sum components
         switcherHash[i] = Switcher();
         switcherHash[i].sel <== neighborsBinary[i];
         switcherHash[i].L <== hashNodes[i];
@@ -44,29 +46,30 @@ template inclusion(levels) {
         switcherSum[i].L <== sumNodes[i];
         switcherSum[i].R <== neighborsSum[i];
 
-
         merklesum[i] = MerkleSum();
         merklesum[i].L <== switcherHash[i].outL;
         merklesum[i].R <== switcherHash[i].outR;
         merklesum[i].sumL <== switcherSum[i].outL;
         merklesum[i].sumR <== switcherSum[i].outR;
 
-        
+        // Update sum and hash nodes
         sumNodes[i+1] <== merklesum[i].sum;
         hashNodes[i+1] <== merklesum[i].root;
     }
 
+    // Check validity of root hash
     component hashEqual = IsEqual();
-    hashEqual.in <== [hashNodes[levels],rootHash];
-    validHash <== hashEqual.out;
+    hashEqual.in <== [hashNodes[levels], rootHash];
+    signal validHash <== hashEqual.out;
 
+    // Check validity of sum
     component sumEqual = IsEqual();
-    sumEqual.in <== [sumNodes[levels],sum];
-    validSum <== sumEqual.out;
+    sumEqual.in <== [sumNodes[levels], sum];
+    signal validSum <== sumEqual.out;
     
-    //signal inMerkleTreeAndValidSum <== validSum * inMerkleTree;
-    //step_out[0] <== inMerkleTree * validHash;
+    // Output the result of validity checks
     step_out[0] <== validSum * validHash;
 }
 
+// Define main component
 component main {public [step_in]}= inclusion(2);

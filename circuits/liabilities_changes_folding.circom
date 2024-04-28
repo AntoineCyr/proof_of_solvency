@@ -13,8 +13,8 @@ template liabilities(levels,changes) {
     signal input oldValues[changes];
     signal input newEmailHash[changes];
     signal input newValues[changes];
-    signal input tempHash[changes];
-    signal input tempSum[changes];
+    signal input tempHash[changes+1];
+    signal input tempSum[changes+1];
     signal newRootHash;
     signal newSum;
     signal oldSum;
@@ -34,8 +34,10 @@ template liabilities(levels,changes) {
     oldSum <== step_in[3];
     signal output step_out[4];
 
-    newRootHash <== tempHash[changes-1];
-    newSum <== tempSum[changes-1];
+    newRootHash <== tempHash[changes];
+    newSum <== tempSum[changes];
+    oldSum === tempSum[0]
+    oldRootHash === tempHash[0]
     var currentSum = oldSum;
 
     signal sumNodes[2][changes][levels+1];
@@ -142,19 +144,19 @@ template liabilities(levels,changes) {
     //check that changes are following the input hash changes
     //tempHash
     hashEqual[0][j] = IsEqual();
-    hashEqual[0][j].in <== [hashNodes[0][j][levels],oldRootHash];
-    tempOldSumEqual[j+1] <== tempOldSumEqual[j] * hashEqual[0][j].out;
+    hashEqual[0][j].in <== [hashNodes[0][j][levels],tempHash[j]];
+    tempOldHashEqual[j+1] <== tempOldHashEqual[j] * hashEqual[0][j].out;
 
     hashEqual[1][j] = IsEqual();
-    hashEqual[1][j].in <== [hashNodes[1][j][levels],tempHash[j]];
+    hashEqual[1][j].in <== [hashNodes[1][j][levels],tempHash[j+1]];
     tempValidHash[j+1] <== tempValidHash[j] * hashEqual[1][j].out;
 
     sumEqual[0][j] = IsEqual();
-    sumEqual[0][j].in <== [sumNodes[0][j][levels],oldSum];
-    tempOldHashEqual[j+1] <== tempOldHashEqual[j] * sumEqual[0][j].out;
+    sumEqual[0][j].in <== [sumNodes[0][j][levels],tempSum[j]];
+    tempOldSumEqual[j+1] <== tempOldSumEqual[j] * sumEqual[0][j].out;
 
     sumEqual[1][j] = IsEqual();
-    sumEqual[1][j].in <== [sumNodes[1][j][levels],tempSum[j]];
+    sumEqual[1][j].in <== [sumNodes[1][j][levels],tempSum[j+1]];
     tempValidSum[j+1] <==  tempValidSum[j] * sumEqual[1][j].out;
     }
 
