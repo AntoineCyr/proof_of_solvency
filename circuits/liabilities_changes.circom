@@ -15,8 +15,6 @@ template liabilities(levels,changes) {
     signal input newValues[changes];
     signal input tempHash[changes];
     signal input tempSum[changes];
-    signal input newRootHash;
-    signal input newSum;
     signal input oldSum;
     signal input oldRootHash;
 
@@ -28,9 +26,11 @@ template liabilities(levels,changes) {
     signal output allSmallRange;
     signal output validHash;
     signal output validSum;
+    signal output newRootHash;
+    signal output newSum;
 
-    newRootHash === tempHash[changes-1];
-    newSum === tempSum[changes-1];
+    newRootHash <== tempHash[changes-1];
+    newSum <== tempSum[changes-1];
     var currentSum = oldSum;
 
     signal sumNodes[2][changes][levels+1];
@@ -157,9 +157,7 @@ template liabilities(levels,changes) {
     validHash <== tempValidHash[changes]*tempOldHashEqual[changes];
     validSum <== tempValidSum[changes]*tempOldSumEqual[changes];
 
-
-    
     
 }
 
-component main {public [oldRootHash,newRootHash,newSum,oldSum]}= liabilities(7,2);
+component main {public [newSum,oldSum]}= liabilities(7,2);
