@@ -16,7 +16,7 @@ describe("liabilities", () => {
   //Compare tree as inputs or build tree inside
   it("case I OK", async () => {
     const input = {
-      balance: ["10", "11", "12", "13",],
+      balance: ["10", "11", "12", "13"],
       emailHash: ["11672136", "10566265", "3423253245", "5342523"],
     };
     const witness = await circ.calculateWitness(input, 1);

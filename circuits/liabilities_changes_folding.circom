@@ -36,26 +36,32 @@ template liabilities(levels,changes) {
 
     newRootHash <== tempHash[changes];
     newSum <== tempSum[changes];
-    oldSum === tempSum[0]
-    oldRootHash === tempHash[0]
+    oldSum === tempSum[0];
+    oldRootHash === tempHash[0];
     var currentSum = oldSum;
 
-    signal sumNodes[2][changes][levels+1];
-    signal hashNodes[2][changes][levels+1];
      //Part 1:
      //check valid new values
+    signal sumNodes[2][changes][levels+1];
+    signal hashNodes[2][changes][levels+1];
     component rangecheck[changes];
     component negativecheck[changes];
     var tempNotBig = 0;
     var tempNotNegative = 0;
     var maxBits = 100;
 
+    // Iterate through each change
     for (var i = 0; i<changes; i++){
+        //define first nodes values
         sumNodes[0][i][0] <== oldValues[i];
         hashNodes[0][i][0] <== oldEmailHash[i];
         sumNodes[1][i][0] <== newValues[i];
         hashNodes[1][i][0] <== newEmailHash[i];
+
+        // Calculate currentSum
         currentSum = currentSum + newValues[i] - oldValues[i];
+        
+         // Perform range check and negative check
         rangecheck[i] = RangeCheck(maxBits);
         rangecheck[i].in <== newValues[i];
         tempNotBig = rangecheck[i].out + tempNotBig;
@@ -65,20 +71,22 @@ template liabilities(levels,changes) {
         tempNotNegative = negativecheck[i].out + tempNotNegative;
     }
 
+    // Check if all new values are within range
     component rangeEqual = IsEqual();
     rangeEqual.in <== [changes,tempNotBig];
     allSmallRange <== rangeEqual.out;
 
+    // Check if all new values are not negative
     component negativeEqual = IsEqual();
     negativeEqual.in <== [changes,tempNotNegative];
     notNegative <== negativeEqual.out;
 
+    // Check if newSum equals currentSum
     component equalSum = IsEqual();
     equalSum.in <== [newSum,currentSum];
 
-    //Part2: 
-    //check valid old paths and new paths
-    //make sure at every change that: old root + change = temp root
+    // Part 2: Check validity of old and new paths
+    // Ensure that old root + change = temp root    
 
     component switcherHash[2][changes][levels];
     component switcherSum[2][changes][levels];
@@ -140,27 +148,28 @@ template liabilities(levels,changes) {
             sumNodes[1][j][i+1] <== merklesum[1][j][i].sum;
             hashNodes[1][j][i+1] <== merklesum[1][j][i].root;
         }
-    //check that old is valid in the old root
-    //check that changes are following the input hash changes
-    //tempHash
+    //value is in old temp hash
     hashEqual[0][j] = IsEqual();
     hashEqual[0][j].in <== [hashNodes[0][j][levels],tempHash[j]];
     tempOldHashEqual[j+1] <== tempOldHashEqual[j] * hashEqual[0][j].out;
 
+    //new temp hash is valid
     hashEqual[1][j] = IsEqual();
     hashEqual[1][j].in <== [hashNodes[1][j][levels],tempHash[j+1]];
     tempValidHash[j+1] <== tempValidHash[j] * hashEqual[1][j].out;
 
+    //old sum is in tempSum
     sumEqual[0][j] = IsEqual();
     sumEqual[0][j].in <== [sumNodes[0][j][levels],tempSum[j]];
     tempOldSumEqual[j+1] <== tempOldSumEqual[j] * sumEqual[0][j].out;
 
+    //new sum is valid
     sumEqual[1][j] = IsEqual();
     sumEqual[1][j].in <== [sumNodes[1][j][levels],tempSum[j+1]];
     tempValidSum[j+1] <==  tempValidSum[j] * sumEqual[1][j].out;
     }
 
-
+    // Check if tempHash and tempSum are valid
     validHash <== tempValidHash[changes]*tempOldHashEqual[changes];
     validSum <== tempValidSum[changes]*tempOldSumEqual[changes];
 
@@ -171,4 +180,4 @@ template liabilities(levels,changes) {
 
 }
 
-component main {public [step_in]}= liabilities(20,32);
+component main {public [step_in]}= liabilities(2,1);

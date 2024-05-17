@@ -14,7 +14,7 @@ describe("liabilitiesChange", () => {
     circ = await wasm_tester(circ_file);
     await circ.loadConstraints();
     num_constraints = circ.constraints.length;
-    console.log("Liabilities #Constraints:", num_constraints);
+    console.log("Liabilities Change #Constraints:", num_constraints);
   });
   it("case I OK", async () => {
     const input = {
@@ -23,12 +23,10 @@ describe("liabilitiesChange", () => {
       newEmailHash: ["19573022"],
       newValues: [15],
       tempHash: [
+        "11346658973375961332326525800941704040239142415932845440524726524725202286597",
         "13409887132926978068627403428641016087864887179975784858831377354067398835782",
       ],
-      tempSum: ["50"],
-      newRootHash:
-        "13409887132926978068627403428641016087864887179975784858831377354067398835782",
-      newSum: "50",
+      tempSum: ["46", "50"],
       oldSum: "46",
       oldRootHash:
         "11346658973375961332326525800941704040239142415932845440524726524725202286597",
@@ -43,7 +41,7 @@ describe("liabilitiesChange", () => {
     };
     const witness = await circ.calculateWitness(input, 1);
     await circ.checkConstraints(witness);
-    
+
     await circ.assertOut(witness, {
       notNegative: "1",
       allSmallRange: "1",

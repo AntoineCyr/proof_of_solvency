@@ -89,4 +89,4 @@ template sumMerkleTree(levels, inputs) {
 }
 
 // Instantiate the main component with parameters 5 levels and 32 inputs
-component main = sumMerkleTree(5, 32);
+component main = sumMerkleTree(2, 4);

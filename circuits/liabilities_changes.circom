@@ -32,18 +32,28 @@ template liabilities(levels, changes) {
     // Calculate newRootHash and newSum
     newRootHash <== tempHash[changes ];
     newSum <== tempSum[changes];
-    oldSum === tempSum[0]
-    oldRootHash === tempHash[0]
+    oldSum === tempSum[0];
+    oldRootHash === tempHash[0];
     
     var currentSum = oldSum;
 
     // Part 1: Check validity of new values
+    signal sumNodes[2][changes][levels+1];
+    signal hashNodes[2][changes][levels+1];
+    component rangecheck[changes];
+    component negativecheck[changes];
     var tempNotBig = 0;
     var tempNotNegative = 0;
     var maxBits = 100;
 
     // Iterate through each change
     for (var i = 0; i < changes; i++) {
+        //define first nodes values
+        sumNodes[0][i][0] <== oldValues[i];
+        hashNodes[0][i][0] <== oldEmailHash[i];
+        sumNodes[1][i][0] <== newValues[i];
+        hashNodes[1][i][0] <== newEmailHash[i];
+
         // Calculate currentSum
         currentSum = currentSum + newValues[i] - oldValues[i];
 
@@ -58,17 +68,17 @@ template liabilities(levels, changes) {
     }
 
     // Check if all new values are within range
-    rangeEqual = IsEqual();
+    component rangeEqual = IsEqual();
     rangeEqual.in <== [changes, tempNotBig];
     allSmallRange <== rangeEqual.out;
 
     // Check if all new values are not negative
-    negativeEqual = IsEqual();
+    component negativeEqual = IsEqual();
     negativeEqual.in <== [changes, tempNotNegative];
     notNegative <== negativeEqual.out;
 
     // Check if newSum equals currentSum
-    equalSum = IsEqual();
+    component equalSum = IsEqual();
     equalSum.in <== [newSum, currentSum];
 
     // Part 2: Check validity of old and new paths
@@ -80,9 +90,13 @@ template liabilities(levels, changes) {
     component hashEqual[2][changes];
     component sumEqual[2][changes];
 
+    signal tempOldHashEqual[changes+1];
+    signal tempOldSumEqual[changes+1];
     signal tempValidHash[changes+1];
     signal tempValidSum [changes+1];
 
+    tempOldHashEqual[0] <== 1;
+    tempOldSumEqual[0] <== 1;
     tempValidHash[0] <== 1;
     tempValidSum[0] <== 1;
 
@@ -155,4 +169,4 @@ template liabilities(levels, changes) {
 }
 
 // Define main component
-component main {public [newSum, oldSum]} = liabilities(7, 2);
+component main {public [oldSum]} = liabilities(2, 1);
