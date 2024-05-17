@@ -1,3 +1,8 @@
+pragma circom 2.0.0;
+include "./merkle.circom";
+include "./utils.circom";
+include "../node_modules/circomlib/circuits/comparators.circom";
+
 // Define a template for a Merkle tree circuit
 template sumMerkleTree(levels, inputs) {
     // Ensure the number of inputs is a power of 2
