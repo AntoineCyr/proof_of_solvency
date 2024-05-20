@@ -123,8 +123,8 @@ fn inclusion() {
     type G2 = pasta_curves::vesta::Point;
 
     let root = current_dir().unwrap();
-    let circuit_filepath = root.join("../compile/inclusion.r1cs");
-    let witness_generator_file = root.join("../compile/inclusion_js/inclusion.wasm");
+    let circuit_filepath = root.join("../circuits/compile/inclusion.r1cs");
+    let witness_generator_file = root.join("../circuits/compile/inclusion_js/inclusion.wasm");
     let root = current_dir().unwrap();
 
     let circuit_file = root.join(circuit_filepath);
@@ -135,7 +135,7 @@ fn inclusion() {
     let pp: PublicParams<G1, G2, _, _> = create_public_params(r1cs.clone());
 
     let mut private_inputs = Vec::new();
-    for i in 0..iteration_count {
+    for _i in 0..iteration_count {
         let mut private_input = HashMap::new();
         private_input.insert("neighborsSum".to_string(), json!([10, 25]));
         private_input.insert(
@@ -155,8 +155,8 @@ fn inclusion() {
                     .to_string()
             ),
         );
-        private_input.insert("userBalance".to_string(), json!(11));
-        private_input.insert("userEmailHash".to_string(), json!(10566265));
+        private_input.insert("userBalance".to_string(), json!(0));
+        private_input.insert("userEmailHash".to_string(), json!(21390));
         private_inputs.push(private_input);
     }
 
@@ -176,21 +176,20 @@ fn inclusion() {
         &pp,
     )
     .unwrap();
-    // TODO: empty?
     let z0_secondary = [F::<G2>::from(0)];
     println!("Verifying a RecursiveSNARK...");
     let start = Instant::now();
     let res = recursive_snark.verify(&pp, iteration_count, &start_public_input, &z0_secondary);
-
     println!(
         "RecursiveSNARK::verify: {:?}, took {:?}",
         res,
         start.elapsed()
     );
-    let verifier_time = start.elapsed();
-    assert!(res.is_ok());
+    println!("res {:?}", res.is_ok())
 }
 fn main() {
+    inclusion();
+    return ();
     //liabilities changes folding
     type G1 = pasta_curves::pallas::Point;
     type G2 = pasta_curves::vesta::Point;

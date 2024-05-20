@@ -188,6 +188,7 @@ where
     };
     let circuit_secondary = TrivialTestCircuit::default();
     let z0_secondary = vec![G2::Scalar::ZERO];
+    println!("z0_secondary:  {:?}", z0_secondary);
 
     let mut recursive_snark = RecursiveSNARK::<G1, G2, C1<G1>, C2<G2>>::new(
         &pp,
@@ -196,8 +197,6 @@ where
         start_public_input.clone(),
         z0_secondary.clone(),
     );
-    let current_public_output = circuit_0.get_public_outputs();
-    println!("public current_public_output: {:?}", current_public_output);
 
     for i in 0..iteration_count {
         let witness = compute_witness::<G1, G2>(
@@ -226,6 +225,7 @@ where
             start_public_input.clone(),
             z0_secondary.clone(),
         );
+        println!("res.is_ok {}", res.is_ok());
         assert!(res.is_ok());
     }
     fs::remove_file(witness_generator_output)?;

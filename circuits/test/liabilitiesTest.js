@@ -61,4 +61,20 @@ describe("liabilities", () => {
       allSmallRange: "0",
     });
   });
+
+  it("case III all zero", async () => {
+    const input = {
+      balance: ["0", "0", "0", "0"],
+      emailHash: ["0", "0", "0", "0"],
+    };
+    const witness = await circ.calculateWitness(input, 1);
+    await circ.checkConstraints(witness);
+    await circ.assertOut(witness, {
+      sum: "0",
+      rootHash:
+        "11657350615105339299979493155253703849333416002063536489697607397247709653621",
+      notNegative: "1",
+      allSmallRange: "1",
+    });
+  });
 });
