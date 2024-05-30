@@ -9,9 +9,9 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 // Define a template for liabilities proof circuit
 template liabilities(levels, changes) {
     // Define inputs
-    signal input oldEmailHash[changes];
+    signal input oldUserHash[changes];
     signal input oldValues[changes];
-    signal input newEmailHash[changes];
+    signal input newUserHash[changes];
     signal input newValues[changes];
     signal input tempHash[changes+1];
     signal input tempSum[changes+1];
@@ -50,9 +50,9 @@ template liabilities(levels, changes) {
     for (var i = 0; i < changes; i++) {
         //define first nodes values
         sumNodes[0][i][0] <== oldValues[i];
-        hashNodes[0][i][0] <== oldEmailHash[i];
+        hashNodes[0][i][0] <== oldUserHash[i];
         sumNodes[1][i][0] <== newValues[i];
-        hashNodes[1][i][0] <== newEmailHash[i];
+        hashNodes[1][i][0] <== newUserHash[i];
 
         // Calculate currentSum
         currentSum = currentSum + newValues[i] - oldValues[i];

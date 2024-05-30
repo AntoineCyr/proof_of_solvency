@@ -13,20 +13,20 @@ template inclusion(levels) {
     signal input sum;
     signal input rootHash;
     signal input userBalance;
-    signal input userEmailHash;
+    signal input userUserHash;
 
     // Define outputs
     signal output step_out[5];
     step_out[1] <== sum;
     step_out[2] <== rootHash;
     step_out[3] <== userBalance;
-    step_out[4] <== userEmailHash;
+    step_out[4] <== userUserHash;
 
     // Initialize sum and hash nodes
     signal sumNodes[levels+1];
     signal hashNodes[levels+1];
     sumNodes[0] <== userBalance;
-    hashNodes[0] <== userEmailHash;
+    hashNodes[0] <== userUserHash;
 
     // Define switchers and Merkle sum components
     component switcherHash[levels];

@@ -44,7 +44,7 @@ async function main() {
   const size = 32;
   const input = {
     balance: [Array(size).fill(0)],
-    emailHash: [Array(size).fill(0)],
+    userHash: [Array(size).fill(0)],
   };
   compile("liabilities", input);
   //circom liabilities.circom --wasm --r1cs -o ./build

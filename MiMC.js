@@ -5,11 +5,11 @@ class MerkleTree {
     this.mimcSponge = await buildMimcSponge();
   }
 
-  async getHash(left_hash, right_hash, left_sum, right_sum) {
+  async getHash(left_hash, left_sum, right_hash, right_sum) {
     let F = this.mimcSponge.F;
 
     const out2 = this.mimcSponge.multiHash(
-      [left_hash, right_hash, left_sum, right_sum],
+      [left_hash, left_sum, right_hash, right_sum],
       0,
       3
     );
@@ -19,14 +19,14 @@ class MerkleTree {
     return [out2[0], left_sum + right_sum];
   }
 
-  async getRoot(balance, emailHash, levels, inputs) {
+  async getRoot(balance, userHash, levels, inputs) {
     let sumNodes = [[], [], []];
     let hashNodes = [[], [], []];
     let levelSize = inputs;
     let nextLevelSize = 0;
 
     for (var i = 0; i < inputs; i++) {
-      hashNodes[0][i] = emailHash[i];
+      hashNodes[0][i] = userHash[i];
       sumNodes[0][i] = balance[i];
     }
 
@@ -34,8 +34,8 @@ class MerkleTree {
       for (var j = 0; j < levelSize; j = j + 2) {
         let values = await this.getHash(
           hashNodes[i][j],
-          hashNodes[i][j + 1],
           sumNodes[i][j],
+          hashNodes[i][j + 1],
           sumNodes[i][j + 1]
         );
         hashNodes[i + 1][nextLevelSize] = values[0];
@@ -73,3 +73,24 @@ async function main() {
 }
 
 main();
+
+/*
+liabilities changes folding tree
+  let outputs = await merkleTree.getRoot(
+    [10, 0, 0, 0, 0, 0, 0, 0],
+    //18187302216140149989n
+    //2060978228548495531n
+    [
+      2060978228548495531n,
+      18187302216140149989n,
+      18187302216140149989n,
+      18187302216140149989n,
+      18187302216140149989n,
+      18187302216140149989n,
+      18187302216140149989n,
+      18187302216140149989n,
+    ],
+    3,
+    8
+  );
+*/

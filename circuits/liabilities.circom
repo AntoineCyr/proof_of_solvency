@@ -6,9 +6,9 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 // Define a template for a Merkle tree circuit
 template sumMerkleTree(levels, inputs) {
     // Ensure the number of inputs is a power of 2
-    // Define input signals for balances and email hashes
+    // Define input signals for balances and user hashes
     signal input balance[inputs];
-    signal input emailHash[inputs];
+    signal input userHash[inputs];
 
     // Define output signals for sum and root hash
     signal output sum;
@@ -36,7 +36,7 @@ template sumMerkleTree(levels, inputs) {
     // Loop through each input
     for (var i = 0; i < inputs; i++) {
         // Assign input values to hash and sum nodes
-        hashNodes[0][i] <== emailHash[i];
+        hashNodes[0][i] <== userHash[i];
         sumNodes[0][i] <== balance[i];
 
         // Perform range check and negative check

@@ -10,7 +10,7 @@ nova_scotia = { path = "../nova_scotia" }
 anyhow = "1.0.65"
 bellperson = { version = "0.25", default-features = false }
 byteorder = "1.4.3"
-ff = { version = "0.13", features = ["derive"]}
+ff = { version = "0.13", features = ["derive"] }
 hex-literal = "0.3.4"
 itertools = "0.9.0"
 nova-snark = "0.23.0"

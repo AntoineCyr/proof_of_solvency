@@ -156,7 +156,7 @@ fn inclusion() {
             ),
         );
         private_input.insert("userBalance".to_string(), json!(0));
-        private_input.insert("userEmailHash".to_string(), json!(21390));
+        private_input.insert("userUserHash".to_string(), json!(21390));
         private_inputs.push(private_input);
     }
 
@@ -215,9 +215,9 @@ fn main() {
         let mut private_input = HashMap::new();
         private_input.insert("newRootHash".to_string(), json!(11));
         private_input.insert("newSum".to_string(), json!(10566265));
-        private_input.insert("oldEmailHash".to_string(), json!(&changes_vec));
+        private_input.insert("oldUserHash".to_string(), json!(&changes_vec));
         private_input.insert("oldValues".to_string(), json!(&changes_vec));
-        private_input.insert("newEmailHash".to_string(), json!(&changes_vec));
+        private_input.insert("newUserHash".to_string(), json!(&changes_vec));
         private_input.insert("newValues".to_string(), json!(&changes_vec));
         private_input.insert("tempHash".to_string(), json!(&changes_vec));
         private_input.insert("tempSum".to_string(), json!(&changes_vec));
