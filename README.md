@@ -6,3 +6,5 @@ To run the tests, run
 TO DO:
 Update readme
 How to compile, run tests, run folding, explain hash values of rust vs typescript
+
+https://github.com/nalinbhardwaj/Nova-Scotia

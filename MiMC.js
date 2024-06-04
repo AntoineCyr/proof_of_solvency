@@ -4,7 +4,6 @@ class MerkleTree {
   async getMimic() {
     this.mimcSponge = await buildMimcSponge();
   }
-
   async getHash(left_hash, left_sum, right_hash, right_sum) {
     let F = this.mimcSponge.F;
 
@@ -61,6 +60,7 @@ async function main() {
   );
   console.log(outputs[0]);
   console.log(outputs[1]);
+  return;
 
   outputs = await merkleTree.getRoot(
     [10, 15, 12, 13],
@@ -94,3 +94,13 @@ liabilities changes folding tree
     8
   );
 */
+
+/*
+normal
+  let outputs = await merkleTree.getRoot(
+    [10, 11, 12, 13],
+    [11672136, 10566265, 3423253245, 5342523],
+    2,
+    4
+  );
+  */

@@ -18,9 +18,9 @@ describe("liabilitiesChange", () => {
   });
   it("case I OK", async () => {
     const input = {
-      oldUserHash: ["10566265"],
+      oldUserHash: [10566265],
       oldValues: [11],
-      newUserHash: ["19573022"],
+      newUserHash: [19573022],
       newValues: [15],
       tempHash: [
         "7729261165844055213358620257169201670782345148208137496504831508545517076145",

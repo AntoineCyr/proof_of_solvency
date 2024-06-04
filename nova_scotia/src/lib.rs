@@ -198,6 +198,8 @@ where
         z0_secondary.clone(),
     );
 
+    //field value different?
+    //do a regular circuit without folding
     for i in 0..iteration_count {
         let witness = compute_witness::<G1, G2>(
             current_public_input.clone(),

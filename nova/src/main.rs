@@ -135,6 +135,7 @@ fn inclusion() {
     let pp: PublicParams<G1, G2, _, _> = create_public_params(r1cs.clone());
 
     let mut private_inputs = Vec::new();
+
     for _i in 0..iteration_count {
         let mut private_input = HashMap::new();
         private_input.insert("neighborsSum".to_string(), json!([10, 25]));
@@ -142,7 +143,7 @@ fn inclusion() {
             "neighborsHash".to_string(),
             json!([
                 11672136,
-                "4811434667398150016357199712138626920529027819147804819192874884729019971979"
+                "4804883266082333966929738749002451722893215557695974762826011088617990435037"
                     .to_string(),
             ]),
         );
@@ -151,16 +152,20 @@ fn inclusion() {
         private_input.insert(
             "rootHash".to_string(),
             json!(
-                "11346658973375961332326525800941704040239142415932845440524726524725202286597"
+                "7729261165844055213358620257169201670782345148208137496504831508545517076145"
                     .to_string()
             ),
         );
-        private_input.insert("userBalance".to_string(), json!(0));
-        private_input.insert("userUserHash".to_string(), json!(21390));
+        private_input.insert("userBalance".to_string(), json!(11));
+        private_input.insert("userHash".to_string(), json!(10566265));
         private_inputs.push(private_input);
     }
 
     let start_public_input = [
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
@@ -187,6 +192,7 @@ fn inclusion() {
     );
     println!("res {:?}", res.is_ok())
 }
+
 fn main() {
     inclusion();
     return ();

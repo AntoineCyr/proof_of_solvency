@@ -4,3 +4,4 @@ package*
 /nova_scotia/target
 *.ptau
 *.ptau.*
+/circuits/compile
