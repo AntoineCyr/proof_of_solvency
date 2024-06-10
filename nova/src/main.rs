@@ -142,9 +142,9 @@ fn inclusion() {
         private_input.insert(
             "neighborsHash".to_string(),
             json!([
-                11672136,
-                "4804883266082333966929738749002451722893215557695974762826011088617990435037"
-                    .to_string(),
+                "3677691099277992195".to_string(),
+                "28561926254282265537438209390008430313500190636100879443084340322545760566831"
+                    .to_string()
             ]),
         );
         private_input.insert("neighborsBinary".to_string(), json!([1, 0]));
@@ -152,20 +152,19 @@ fn inclusion() {
         private_input.insert(
             "rootHash".to_string(),
             json!(
-                "7729261165844055213358620257169201670782345148208137496504831508545517076145"
+                "7270102280961693760725023799639149982274443118879847539912228780362948820462"
                     .to_string()
             ),
         );
         private_input.insert("userBalance".to_string(), json!(11));
-        private_input.insert("userHash".to_string(), json!(10566265));
+        private_input.insert(
+            "userHash".to_string(),
+            json!("13892846547337029487".to_string()),
+        );
         private_inputs.push(private_input);
     }
 
     let start_public_input = [
-        F::<G1>::from(0),
-        F::<G1>::from(0),
-        F::<G1>::from(0),
-        F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
@@ -235,6 +234,14 @@ fn main() {
     }
 
     let start_public_input = [
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
+        F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),

@@ -9,7 +9,7 @@ template inclusion(levels) {
     signal input neighborsSum[levels];
     signal input neighborsHash[levels];
     signal input neighborsBinary[levels];
-    signal input step_in[9];
+    signal input step_in[5];
     signal input sum;
     signal input rootHash;
     signal input userBalance;
@@ -22,15 +22,11 @@ template inclusion(levels) {
     merklesumi.sumL <== neighborsSum[0];
     merklesumi.sumR <== userBalance;
 
-    signal output step_out[9];
+    signal output step_out[5];
     step_out[1] <== sum;
     step_out[2] <== rootHash; 
     step_out[3] <== userBalance;
     step_out[4] <== userHash;
-    step_out[5] <== neighborsSum[0];
-    step_out[6] <== neighborsHash[0];
-    step_out[7] <== merklesumi.sum;
-    step_out[8] <== merklesumi.root;
 
     // Initialize sum and hash nodes
     signal sumNodes[levels+1];

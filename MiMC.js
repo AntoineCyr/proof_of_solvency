@@ -53,8 +53,10 @@ async function main() {
   await merkleTree.getMimic();
 
   let outputs = await merkleTree.getRoot(
+    //[10, 11, 12, 13],
     [10, 11, 12, 13],
     [11672136, 10566265, 3423253245, 5342523],
+    //[10566265, 11672136, 3423253245, 5342523],
     2,
     4
   );
