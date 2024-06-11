@@ -182,4 +182,4 @@ template liabilities(levels,changes) {
 
 }
 
-component main {public [step_in]}= liabilities(3,1);
+component main {public [step_in]}= liabilities(2,1);
