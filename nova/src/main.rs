@@ -324,51 +324,59 @@ fn liabilities() {
     let pp: PublicParams<G1, G2, _, _> = create_public_params(r1cs.clone());
     let iteration_count = 1;
     let mut private_inputs = Vec::new();
+    let leaf_0 = Leaf::new("0".to_string(), 0);
+    let mut leafs = vec![
+        leaf_0.clone(),
+        leaf_0.clone(),
+        leaf_0.clone(),
+        leaf_0.clone(),
+    ];
+    let leaf_1 = Leaf::new("11672136".to_string(), 10);
+    let leaf_2 = Leaf::new("10566265".to_string(), 11);
+    let old_merkle_sum_tree = MerkleSumTree::new(leafs).unwrap();
+    let mut new_merkle_sum_tree = old_merkle_sum_tree.clone();
+    let index = new_merkle_sum_tree.push(leaf_1).unwrap();
+    let mut new_merkle_sum_tree2 = new_merkle_sum_tree.clone();
+    let index2 = new_merkle_sum_tree2.push(leaf_2).unwrap();
+    let merkle_sum_tree_change = MerkleSumTreeChange::new(
+        index,
+        old_merkle_sum_tree.clone(),
+        new_merkle_sum_tree.clone(),
+    );
+    let merkle_sum_tree_change2 =
+        MerkleSumTreeChange::new(index2, new_merkle_sum_tree, new_merkle_sum_tree2);
+    let liabilities_input = LiabilitiesInput::new(vec![merkle_sum_tree_change]);
+    let liabilities_input2 = LiabilitiesInput::new(vec![merkle_sum_tree_change2]);
+    let liabilities = vec![liabilities_input, liabilities_input2];
 
     for i in 0..iteration_count {
-        let leaf_0 = Leaf::new("0".to_string(), 0);
-        let mut leafs = vec![
-            leaf_0.clone(),
-            leaf_0.clone(),
-            leaf_0.clone(),
-            leaf_0.clone(),
-        ];
-        let leaf_1 = Leaf::new("11672136".to_string(), 10);
-        let old_merkle_sum_tree = MerkleSumTree::new(leafs).unwrap();
-        let mut new_merkle_sum_tree = old_merkle_sum_tree.clone();
-        new_merkle_sum_tree.push(leaf_1);
-        let merkle_sum_tree_change =
-            MerkleSumTreeChange::new(0, old_merkle_sum_tree, new_merkle_sum_tree);
-        let liabilities_input = LiabilitiesInput::new(vec![merkle_sum_tree_change]);
-
         let mut private_input = HashMap::new();
         private_input.insert(
             "oldUserHash".to_string(),
-            json!(liabilities_input.old_user_hash),
+            json!(liabilities[i].old_user_hash),
         );
         private_input.insert(
             "oldValues".to_string(),
-            json!([liabilities_input.old_values]),
+            json!([liabilities[i].old_values]),
         );
         private_input.insert(
             "newUserHash".to_string(),
-            json!(liabilities_input.new_user_hash),
+            json!(liabilities[i].new_user_hash),
         );
-        private_input.insert("newValues".to_string(), json!(liabilities_input.new_values));
-        println!("{:?}", liabilities_input.temp_hash);
-        private_input.insert("tempHash".to_string(), json!(liabilities_input.temp_hash));
-        private_input.insert("tempSum".to_string(), json!(liabilities_input.temp_sum));
+        private_input.insert("newValues".to_string(), json!(liabilities[i].new_values));
+        private_input.insert("tempHash".to_string(), json!(liabilities[i].temp_hash));
+        private_input.insert("tempSum".to_string(), json!(liabilities[i].temp_sum));
         private_input.insert(
             "neighborsSum".to_string(),
-            json!(liabilities_input.neighbors_sum),
+            json!(liabilities[i].neighbors_sum),
         );
         private_input.insert(
             "neighborsHash".to_string(),
-            json!(liabilities_input.neighbor_hash),
+            json!(liabilities[i].neighbor_hash),
         );
         private_input.insert(
             "neighborsBinary".to_string(),
-            json!(liabilities_input.neighors_binary),
+            json!(liabilities[i].neighors_binary),
         );
         private_inputs.push(private_input);
     }
