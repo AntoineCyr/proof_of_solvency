@@ -5,18 +5,15 @@ import * as fs from "fs";
 
 async function compile(circuit_name: string, signals: any) {
   //await exec(`circom ${circuit_name}.circom --wasm --r1cs -o ./build`);
-  console.log("here1");
   await exec(
     "wget https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_17.ptau"
   );
-  console.log("here2");
   await exec(
     `npx snarkjs groth16 setup build/${circuit_name}.r1cs powersOfTau28_hez_final_17.ptau circuit_0000.zkey`
   );
   //npx snarkjs groth16 setup build/liabilities.r1cs powersOfTau28_hez_final_18.ptau circuit_0000.zkey
 
   let proof_start = Date.now();
-  console.log("here3");
   const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     signals,
     `build/${circuit_name}_js/${circuit_name}.wasm`,

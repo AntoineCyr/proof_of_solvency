@@ -74,7 +74,6 @@ where
         .iter()
         .map(|x| BigInt::from_str_radix(x, 16).unwrap().to_str_radix(10))
         .collect();
-    println!("decimal_stringified_input: {:?}", decimal_stringified_input);
 
     let input = CircomInput {
         step_in: decimal_stringified_input.clone(),
@@ -86,7 +85,6 @@ where
         FileLocation::URL(_) => true,
     };
     let input_json = serde_json::to_string(&input).unwrap();
-    println!("input_json: {:?}", input_json);
 
     if is_wasm {
         generate_witness_from_wasm::<F<G1>>(
@@ -162,8 +160,6 @@ where
     G1: Group<Base = <G2 as Group>::Scalar>,
     G2: Group<Base = <G1 as Group>::Scalar>,
 {
-    println!("private inputs{:?}", private_inputs.clone());
-    println!("public inputs{:?}", start_public_input.clone());
     let root = current_dir().unwrap();
     let witness_generator_output = root.join("circom_witness.wtns");
 
@@ -188,7 +184,6 @@ where
     };
     let circuit_secondary = TrivialTestCircuit::default();
     let z0_secondary = vec![G2::Scalar::ZERO];
-    println!("z0_secondary:  {:?}", z0_secondary);
 
     let mut recursive_snark = RecursiveSNARK::<G1, G2, C1<G1>, C2<G2>>::new(
         &pp,
@@ -214,7 +209,7 @@ where
         };
 
         let current_public_output = circuit.get_public_outputs();
-        println!("public current_public_output: {:?}", current_public_output);
+        //println!("public current_public_output: {:?}", current_public_output);
         current_public_input = current_public_output
             .iter()
             .map(|&x| format!("{:?}", x).strip_prefix("0x").unwrap().to_string())
@@ -227,7 +222,6 @@ where
             start_public_input.clone(),
             z0_secondary.clone(),
         );
-        println!("res.is_ok {}", res.is_ok());
         assert!(res.is_ok());
     }
     fs::remove_file(witness_generator_output)?;

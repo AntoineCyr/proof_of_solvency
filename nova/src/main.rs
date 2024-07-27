@@ -275,7 +275,7 @@ fn inclusion() {
     }
 
     let start_public_input = [
-        F::<G1>::from(0),
+        F::<G1>::from(1),
         F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),
@@ -355,10 +355,7 @@ fn liabilities() {
             "oldUserHash".to_string(),
             json!(liabilities[i].old_user_hash),
         );
-        private_input.insert(
-            "oldValues".to_string(),
-            json!([liabilities[i].old_values]),
-        );
+        private_input.insert("oldValues".to_string(), json!([liabilities[i].old_values]));
         private_input.insert(
             "newUserHash".to_string(),
             json!(liabilities[i].new_user_hash),

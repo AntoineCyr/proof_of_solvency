@@ -88,5 +88,5 @@ template sumMerkleTree(levels, inputs) {
     rootHash <== hashNodes[levels][0]; 
 }
 
-// Instantiate the main component with parameters 5 levels and 32 inputs
+// Instantiate the main component
 component main = sumMerkleTree(2, 4);

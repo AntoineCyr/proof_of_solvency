@@ -1,0 +1,24 @@
+{
+  "name": "proof-of-solvency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "circom_tester": "^0.0.19",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7",
+    "merkletreejs": "^0.3.10",
+    "snarkjs": "^0.7.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/snarkjs": "^0.7.8",
+    "circom": "^0.5.46",
+    "mocha": "^10.7.0"
+  }
+}
