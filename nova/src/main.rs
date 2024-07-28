@@ -1,17 +1,13 @@
 use merkle_sum_tree::{Leaf, MerkleSumTree, Position};
+use std::env;
 use std::{collections::HashMap, env::current_dir, time::Instant};
 
 //use ff::derive::bitvec::vec;
 use ff::PrimeField;
 use nova_scotia::{
-    circom::reader::load_r1cs, create_public_params, create_recursive_circuit, FileLocation, F, S,
+    circom::reader::load_r1cs, create_public_params, create_recursive_circuit, FileLocation, F,
 };
-use nova_snark::{
-    //provider,
-    //traits::{circuit::StepCircuit, Group},
-    CompressedSNARK,
-    PublicParams,
-};
+use nova_snark::PublicParams;
 use serde_json::json;
 
 #[derive(Debug, Clone)]
@@ -121,110 +117,19 @@ impl LiabilitiesInput {
     }
 }
 
-fn run_test(circuit_filepath: String, witness_gen_filepath: String) {
-    type G1 = pasta_curves::pallas::Point;
-    type G2 = pasta_curves::vesta::Point;
+fn main() {
+    let args: Vec<String> = env::args().collect();
 
-    println!(
-        "Running test with witness generator: {} and group: {}",
-        witness_gen_filepath,
-        std::any::type_name::<G1>()
-    );
-    let iteration_count = 5;
-    let root = current_dir().unwrap();
-
-    let circuit_file = root.join(circuit_filepath);
-    let r1cs = load_r1cs::<G1, G2>(&FileLocation::PathBuf(circuit_file));
-    let witness_generator_file = root.join(witness_gen_filepath);
-
-    let mut private_inputs = Vec::new();
-    for i in 0..iteration_count {
-        let mut private_input = HashMap::new();
-        private_input.insert("adder".to_string(), json!(i));
-        private_inputs.push(private_input);
+    if args.len() < 2 {
+        eprintln!("Usage: cargo run <function_name>");
+        return;
     }
 
-    let start_public_input = [F::<G1>::from(10), F::<G1>::from(10)];
-
-    let pp: PublicParams<G1, G2, _, _> = create_public_params(r1cs.clone());
-
-    println!(
-        "Number of constraints per step (primary circuit): {}",
-        pp.num_constraints().0
-    );
-    println!(
-        "Number of constraints per step (secondary circuit): {}",
-        pp.num_constraints().1
-    );
-
-    println!(
-        "Number of variables per step (primary circuit): {}",
-        pp.num_variables().0
-    );
-    println!(
-        "Number of variables per step (secondary circuit): {}",
-        pp.num_variables().1
-    );
-
-    println!("Creating a RecursiveSNARK...");
-
-    let new_file = FileLocation::PathBuf(witness_generator_file.clone());
-
-    println!("after check");
-    let start = Instant::now();
-    let recursive_snark = create_recursive_circuit(
-        FileLocation::PathBuf(witness_generator_file),
-        r1cs,
-        private_inputs,
-        start_public_input.to_vec(),
-        &pp,
-    )
-    .unwrap();
-    println!("RecursiveSNARK creation took {:?}", start.elapsed());
-
-    // TODO: empty?
-    let z0_secondary = [F::<G2>::from(0)];
-
-    // verify the recursive SNARK
-    println!("Verifying a RecursiveSNARK...");
-    let start = Instant::now();
-    let res = recursive_snark.verify(&pp, iteration_count, &start_public_input, &z0_secondary);
-    println!(
-        "RecursiveSNARK::verify: {:?}, took {:?}",
-        res,
-        start.elapsed()
-    );
-    assert!(res.is_ok());
-
-    // produce a compressed SNARK
-    println!("Generating a CompressedSNARK using Spartan with IPA-PC...");
-    let start = Instant::now();
-
-    let (pk, vk) = CompressedSNARK::<_, _, _, _, S<G1>, S<G2>>::setup(&pp).unwrap();
-    let res = CompressedSNARK::<_, _, _, _, S<G1>, S<G2>>::prove(&pp, &pk, &recursive_snark);
-    println!(
-        "CompressedSNARK::prove: {:?}, took {:?}",
-        res.is_ok(),
-        start.elapsed()
-    );
-    assert!(res.is_ok());
-    let compressed_snark = res.unwrap();
-
-    // verify the compressed SNARK
-    println!("Verifying a CompressedSNARK...");
-    let start = Instant::now();
-    let res = compressed_snark.verify(
-        &vk,
-        iteration_count,
-        start_public_input.to_vec(),
-        z0_secondary.to_vec(),
-    );
-    println!(
-        "CompressedSNARK::verify: {:?}, took {:?}",
-        res.is_ok(),
-        start.elapsed()
-    );
-    assert!(res.is_ok());
+    match args[1].as_str() {
+        "inclusion" => inclusion(),
+        "liabilities" => liabilities(),
+        _ => println!("Unknown function name: {}", args[1]),
+    }
 }
 
 fn inclusion() {
@@ -302,11 +207,6 @@ fn inclusion() {
     println!("res {:?}", res.is_ok())
 }
 
-fn main() {
-    //inclusion();
-    liabilities();
-}
-
 fn liabilities() {
     type G1 = pasta_curves::pallas::Point;
     type G2 = pasta_curves::vesta::Point;
@@ -325,7 +225,7 @@ fn liabilities() {
     let iteration_count = 1;
     let mut private_inputs = Vec::new();
     let leaf_0 = Leaf::new("0".to_string(), 0);
-    let mut leafs = vec![
+    let leafs = vec![
         leaf_0.clone(),
         leaf_0.clone(),
         leaf_0.clone(),

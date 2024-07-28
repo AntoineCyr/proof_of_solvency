@@ -25,25 +25,36 @@ To implement folding, we slightly adjust the way we build the changes circuit. E
 
 The proof of inclusion aims to prove that the balance of a user is included in the Merkle Tree created in the proof of liabilities. To prove that a balance is included, it is sufficient to show that you know the Merkle path of a user balance. Using the Nova folding scheme, we can prove the balance of a user is included at multiple points in time. For instance, we can have 365 steps, one for each day, to prove that the balance of the user was included every day in the last year.
 
+### Compile, integrate and test
+
+When running integrations test, you have to be careful which circuit version is compiled. Depending on the size of your tree
+and the number of changes, your number of inputs will change. You have to modify the tests accordingly.
+
 ## Run the Circuits Tests
 
 ```sh
 make test
 ```
 
-## Compile the Circuits
+## Compile the Circuits for Nova
 
 ```sh
 make compile
 ```
 
-## How to Run the Integration of the Folding Circuit with Nova
+## Nova integration tests
 
 ```sh
-make liabilities test
-make inclusion test
+make nova-test
 ```
 
 ### Additional Information
 
 For a more in-depth understanding of the circuits, including performance and optimization analysis, please refer to my upcoming thesis.
+
+### Warning
+
+Nova do not use the same field size as circom. This causes hash values to be different in the 2 tests we are running (simple circom tests vs nova integration test).
+To visualize the hash values of your tree in circom, you can use the MiMC.js file of this repo.
+For Nova, you can use this other repo that I created: https://github.com/AntoineCyr/merkle_sum_proof
+The nova integration uses this repo to build the tree.
