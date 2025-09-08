@@ -5,6 +5,9 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 
 // Define a template for inclusion proof circuit
 template inclusion(levels) {
+    // Validate template parameters
+    assert(levels > 0 && levels <= 32);
+    
     // Define inputs
     signal input neighborsSum[levels];
     signal input neighborsHash[levels];

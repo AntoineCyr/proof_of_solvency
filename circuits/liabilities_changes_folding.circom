@@ -5,9 +5,12 @@ include "./merkle.circom";
 include "./utils.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 
-
 template liabilities(levels,changes) {
-    //number of inputs need to be == 2^n
+    // Constants for balance validation
+    var DEFAULT_MAX_BALANCE_BITS = 100;  // Maximum bits for balance (supports up to 2^100)
+    // Validate template parameters
+    assert(levels > 0 && levels <= 32); 
+    assert(changes > 0 && changes <= 1000);
 
     signal input oldUserHash[changes];
     signal input oldValues[changes];
@@ -40,11 +43,7 @@ template liabilities(levels,changes) {
      //check valid new values
     signal sumNodes[2][changes][levels+1];
     signal hashNodes[2][changes][levels+1];
-    component rangecheck[changes];
-    component negativecheck[changes];
-    var tempNotBig = 0;
-    var tempNotNegative = 0;
-    var maxBits = 100;
+    component balanceCheck[changes];
 
     // Iterate through each change
     for (var i = 0; i<changes; i++){
@@ -57,16 +56,10 @@ template liabilities(levels,changes) {
         // Calculate currentSum
         currentSum = currentSum + newValues[i] - oldValues[i];
         
-         // Perform range check and negative check
-        rangecheck[i] = RangeCheck(maxBits);
-        rangecheck[i].in <== newValues[i];
-
-        negativecheck[i] = NegativeCheck();
-        negativecheck[i].in <== newValues[i];
-        
-        // Assert new value is within range and non-negative
-        rangecheck[i].out === 1;
-        negativecheck[i].out === 1;
+        // Perform non-negative balance validation (allows 0 balances)
+        balanceCheck[i] = NonNegativeBalanceCheck(DEFAULT_MAX_BALANCE_BITS);
+        balanceCheck[i].balance <== newValues[i];
+        balanceCheck[i].out === 1;
     }
 
     // Assert newSum equals currentSum

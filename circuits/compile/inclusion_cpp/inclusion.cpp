@@ -3076,7 +3076,7 @@ void MerkleSum_2_run(uint ctx_index,Circom_CalcWit* ctx){
 FrElement* circuitConstants = ctx->circuitConstants;
 FrElement* signalValues = ctx->signalValues;
 FrElement expaux[1];
-FrElement lvar[0];
+FrElement lvar[3];
 u64 mySignalStart = ctx->componentMemory[ctx_index].signalStart;
 std::string myTemplateName = ctx->componentMemory[ctx_index].templateName;
 std::string myComponentName = ctx->componentMemory[ctx_index].componentName;
@@ -3092,6 +3092,24 @@ int cmp_index_ref_load = -1;
 std::string new_cmp_name = "hasher";
 MiMCSponge_1_create(mySignalStart+6,0+ctx_index+1,ctx,new_cmp_name,myId);
 mySubcomponents[0] = 0+ctx_index+1;
+}
+{
+PFrElement aux_dest = &lvar[0];
+// load src
+// end load src
+Fr_copy(aux_dest,&circuitConstants[5]);
+}
+{
+PFrElement aux_dest = &lvar[1];
+// load src
+// end load src
+Fr_copy(aux_dest,&circuitConstants[0]);
+}
+{
+PFrElement aux_dest = &lvar[2];
+// load src
+// end load src
+Fr_copy(aux_dest,&circuitConstants[2]);
 }
 {
 uint cmp_index_ref = 0;
@@ -3165,7 +3183,7 @@ Fr_copy(aux_dest,&ctx->signalValues[ctx->componentMemory[mySubcomponents[0]].sig
 {
 PFrElement aux_dest = &signalValues[mySignalStart + 1];
 // load src
-Fr_add(&expaux[0],&signalValues[mySignalStart + 4],&signalValues[mySignalStart + 5]); // line circom 19
+Fr_add(&expaux[0],&signalValues[mySignalStart + 4],&signalValues[mySignalStart + 5]); // line circom 24
 // end load src
 Fr_copy(aux_dest,&expaux[0]);
 }
@@ -3204,23 +3222,23 @@ int cmp_index_ref_load = -1;
 {
 PFrElement aux_dest = &signalValues[mySignalStart + 5];
 // load src
-Fr_sub(&expaux[1],&signalValues[mySignalStart + 4],&signalValues[mySignalStart + 3]); // line circom 55
-Fr_mul(&expaux[0],&expaux[1],&signalValues[mySignalStart + 2]); // line circom 55
+Fr_sub(&expaux[1],&signalValues[mySignalStart + 4],&signalValues[mySignalStart + 3]); // line circom 48
+Fr_mul(&expaux[0],&expaux[1],&signalValues[mySignalStart + 2]); // line circom 48
 // end load src
 Fr_copy(aux_dest,&expaux[0]);
 }
 {
 PFrElement aux_dest = &signalValues[mySignalStart + 0];
 // load src
-Fr_add(&expaux[0],&signalValues[mySignalStart + 5],&signalValues[mySignalStart + 3]); // line circom 56
+Fr_add(&expaux[0],&signalValues[mySignalStart + 5],&signalValues[mySignalStart + 3]); // line circom 49
 // end load src
 Fr_copy(aux_dest,&expaux[0]);
 }
 {
 PFrElement aux_dest = &signalValues[mySignalStart + 1];
 // load src
-Fr_neg(&expaux[1],&signalValues[mySignalStart + 5]); // line circom 57
-Fr_add(&expaux[0],&expaux[1],&signalValues[mySignalStart + 4]); // line circom 57
+Fr_neg(&expaux[1],&signalValues[mySignalStart + 5]); // line circom 50
+Fr_add(&expaux[0],&expaux[1],&signalValues[mySignalStart + 4]); // line circom 50
 // end load src
 Fr_copy(aux_dest,&expaux[0]);
 }
@@ -3305,6 +3323,10 @@ mySubcomponents[aux_create+ i] = aux_cmp_num;
 csoffset += 3544 ;
 aux_cmp_num += 6;
 }
+}
+{
+if (!Fr_isTrue(&circuitConstants[2])) std::cout << "Failed assert in template/function " << myTemplateName << " line 9. " <<  "Followed trace of components: " << ctx->getTrace(myId) << std::endl;
+assert(Fr_isTrue(&circuitConstants[2]));
 }
 {
 uint cmp_index_ref = 0;
@@ -3397,7 +3419,7 @@ PFrElement aux_dest = &lvar[1];
 // end load src
 Fr_copy(aux_dest,&circuitConstants[1]);
 }
-Fr_lt(&expaux[0],&lvar[1],&circuitConstants[3]); // line circom 43
+Fr_lt(&expaux[0],&lvar[1],&circuitConstants[3]); // line circom 46
 while(Fr_isTrue(&expaux[0])){
 {
 uint cmp_index_ref = ((1 * Fr_toInt(&lvar[1])) + 1);
@@ -3566,24 +3588,24 @@ Fr_copy(aux_dest,&ctx->signalValues[ctx->componentMemory[mySubcomponents[((1 * F
 {
 PFrElement aux_dest = &lvar[1];
 // load src
-Fr_add(&expaux[0],&lvar[1],&circuitConstants[2]); // line circom 43
+Fr_add(&expaux[0],&lvar[1],&circuitConstants[2]); // line circom 46
 // end load src
 Fr_copy(aux_dest,&expaux[0]);
 }
-Fr_lt(&expaux[0],&lvar[1],&circuitConstants[3]); // line circom 43
+Fr_lt(&expaux[0],&lvar[1],&circuitConstants[3]); // line circom 46
 }
 {
 {{
-Fr_eq(&expaux[0],&signalValues[mySignalStart + 23],&signalValues[mySignalStart + 15]); // line circom 67
+Fr_eq(&expaux[0],&signalValues[mySignalStart + 23],&signalValues[mySignalStart + 15]); // line circom 70
 }}
-if (!Fr_isTrue(&expaux[0])) std::cout << "Failed assert in template/function " << myTemplateName << " line 67. " <<  "Followed trace of components: " << ctx->getTrace(myId) << std::endl;
+if (!Fr_isTrue(&expaux[0])) std::cout << "Failed assert in template/function " << myTemplateName << " line 70. " <<  "Followed trace of components: " << ctx->getTrace(myId) << std::endl;
 assert(Fr_isTrue(&expaux[0]));
 }
 {
 {{
-Fr_eq(&expaux[0],&signalValues[mySignalStart + 20],&signalValues[mySignalStart + 14]); // line circom 70
+Fr_eq(&expaux[0],&signalValues[mySignalStart + 20],&signalValues[mySignalStart + 14]); // line circom 73
 }}
-if (!Fr_isTrue(&expaux[0])) std::cout << "Failed assert in template/function " << myTemplateName << " line 70. " <<  "Followed trace of components: " << ctx->getTrace(myId) << std::endl;
+if (!Fr_isTrue(&expaux[0])) std::cout << "Failed assert in template/function " << myTemplateName << " line 73. " <<  "Followed trace of components: " << ctx->getTrace(myId) << std::endl;
 assert(Fr_isTrue(&expaux[0]));
 }
 for (uint i = 0; i < 7; i++){

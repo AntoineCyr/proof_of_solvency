@@ -5,7 +5,23 @@ include "../node_modules/circomlib/circuits/comparators.circom";
 
 // Define a template for a Merkle tree circuit
 template sumMerkleTree(levels, inputs) {
+    // Constants for balance validation
+    var DEFAULT_MAX_BALANCE_BITS = 100;  // Maximum bits for balance (supports up to 2^100)
+    // Validate template parameters at compile time
+    assert(levels > 0 && levels <= 32);  // Reasonable bounds for tree depth
+    assert(inputs > 0 && inputs <= 2**20);  // Reasonable bounds for inputs
+    
     // Ensure the number of inputs is a power of 2
+    var isPowerOf2 = 1;
+    var temp = inputs;
+    while (temp > 1) {
+        if (temp % 2 == 1) {
+            isPowerOf2 = 0;
+        }
+        temp = temp \ 2;
+    }
+    assert(isPowerOf2 == 1);  // inputs must be power of 2
+    
     // Define input signals for balances and user hashes
     signal input balance[inputs];
     signal input userHash[inputs];
@@ -22,13 +38,9 @@ template sumMerkleTree(levels, inputs) {
     // Initialize variables
     var levelSize = inputs;
     var nextLevelSize = 0;
-    var maxBits = 100;
-    var tempNotBig = 0;
-    var tempNotNegative = 0;
     
-    // Define range check and negative check components
-    component rangecheck[inputs];
-    component negativecheck[inputs];
+    // Define balance validation components
+    component balanceCheck[inputs];
 
     // Loop through each input
     for (var i = 0; i < inputs; i++) {
@@ -36,18 +48,10 @@ template sumMerkleTree(levels, inputs) {
         hashNodes[0][i] <== userHash[i];
         sumNodes[0][i] <== balance[i];
 
-        // Perform range check and negative check
-        rangecheck[i] = RangeCheck(maxBits);
-        rangecheck[i].in <== balance[i];
-        tempNotBig = rangecheck[i].out + tempNotBig;
-
-        negativecheck[i] = NegativeCheck();
-        negativecheck[i].in <== balance[i];
-        tempNotNegative = negativecheck[i].out + tempNotNegative;
-        
-        // Assert balance is within range and non-negative
-        rangecheck[i].out === 1;
-        negativecheck[i].out === 1;
+        // Perform non-negative balance validation (allows 0 balances)
+        balanceCheck[i] = NonNegativeBalanceCheck(DEFAULT_MAX_BALANCE_BITS);
+        balanceCheck[i].balance <== balance[i];
+        balanceCheck[i].out === 1;
     }
 
     // Define Merkle sum components
