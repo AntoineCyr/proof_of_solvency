@@ -180,7 +180,6 @@ fn inclusion() {
     }
 
     let start_public_input = [
-        F::<G1>::from(1),
         F::<G1>::from(0),
         F::<G1>::from(0),
         F::<G1>::from(0),

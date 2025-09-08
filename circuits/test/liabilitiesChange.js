@@ -3,11 +3,7 @@ const path = require("path");
 const wasm_tester = require("circom_tester").wasm;
 
 describe("liabilitiesChange", () => {
-  var circ_file = path.join(
-    __dirname,
-    "circuits",
-    "../../liabilities_changes.circom"
-  );
+  var circ_file = "/tmp/proof_of_solvency/circuits/liabilities_changes.circom";
   var circ, num_constraints;
 
   before(async () => {
@@ -43,10 +39,8 @@ describe("liabilitiesChange", () => {
     await circ.checkConstraints(witness);
 
     await circ.assertOut(witness, {
-      notNegative: "1",
-      allSmallRange: "1",
-      validHash: "1",
-      validSum: "1",
+      newRootHash: "18385639392567322859359258022392238054588079328206478535947843108833814699484",
+      newSum: "50",
     });
   });
 });

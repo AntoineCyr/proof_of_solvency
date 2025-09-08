@@ -14,9 +14,6 @@ template sumMerkleTree(levels, inputs) {
     signal output sum;
     signal output rootHash;
 
-    // Define output signals for range checks
-    signal output notNegative;
-    signal output allSmallRange;
 
     // Define arrays for storing sum and hash nodes at each level
     signal sumNodes[levels + 1][inputs];
@@ -47,17 +44,11 @@ template sumMerkleTree(levels, inputs) {
         negativecheck[i] = NegativeCheck();
         negativecheck[i].in <== balance[i];
         tempNotNegative = negativecheck[i].out + tempNotNegative;
+        
+        // Assert balance is within range and non-negative
+        rangecheck[i].out === 1;
+        negativecheck[i].out === 1;
     }
-
-    // Check if all balances are within a small range
-    component rangeEqual = IsEqual();
-    rangeEqual.in <== [inputs, tempNotBig];
-    allSmallRange <== rangeEqual.out;
-
-    // Check if all balances are non-negative
-    component negativeEqual = IsEqual();
-    negativeEqual.in <== [inputs, tempNotNegative];
-    notNegative <== negativeEqual.out;
 
     // Define Merkle sum components
     component merklesum[levels][inputs];
