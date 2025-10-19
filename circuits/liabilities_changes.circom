@@ -66,49 +66,31 @@ template liabilities(levels, changes) {
     // Part 2: Check validity of old and new paths
     // Ensure that old root + change = temp root
    
-    component switcherHash[2][changes][levels];
-    component switcherSum[2][changes][levels];
-    component merklesum[2][changes][levels];
+    component merkleSumLevel[2][changes][levels];
 
     for (var j = 0; j < changes; j++){
         for  (var i = 0; i<levels; i++){
-            switcherHash[0][j][i] = Switcher();
-            switcherHash[0][j][i].sel <== neighborsBinary[j][i];
-            switcherHash[0][j][i].L <== hashNodes[0][j][i];
-            switcherHash[0][j][i].R <== neighborsHash[j][i];
+            // Old state verification
+            merkleSumLevel[0][j][i] = MerkleSumLevel();
+            merkleSumLevel[0][j][i].hashNode <== hashNodes[0][j][i];
+            merkleSumLevel[0][j][i].sumNode <== sumNodes[0][j][i];
+            merkleSumLevel[0][j][i].neighborHash <== neighborsHash[j][i];
+            merkleSumLevel[0][j][i].neighborSum <== neighborsSum[j][i];
+            merkleSumLevel[0][j][i].neighborBinary <== neighborsBinary[j][i];
 
-            switcherSum[0][j][i] = Switcher();
-            switcherSum[0][j][i].sel <== neighborsBinary[j][i];
-            switcherSum[0][j][i].L <== sumNodes[0][j][i];
-            switcherSum[0][j][i].R <== neighborsSum[j][i];
+            hashNodes[0][j][i+1] <== merkleSumLevel[0][j][i].hashOut;
+            sumNodes[0][j][i+1] <== merkleSumLevel[0][j][i].sumOut;
 
-            merklesum[0][j][i] = MerkleSum();
-            merklesum[0][j][i].L <== switcherHash[0][j][i].outL;
-            merklesum[0][j][i].R <== switcherHash[0][j][i].outR;
-            merklesum[0][j][i].sumL <== switcherSum[0][j][i].outL;
-            merklesum[0][j][i].sumR <== switcherSum[0][j][i].outR;
+            // New state verification
+            merkleSumLevel[1][j][i] = MerkleSumLevel();
+            merkleSumLevel[1][j][i].hashNode <== hashNodes[1][j][i];
+            merkleSumLevel[1][j][i].sumNode <== sumNodes[1][j][i];
+            merkleSumLevel[1][j][i].neighborHash <== neighborsHash[j][i];
+            merkleSumLevel[1][j][i].neighborSum <== neighborsSum[j][i];
+            merkleSumLevel[1][j][i].neighborBinary <== neighborsBinary[j][i];
 
-            sumNodes[0][j][i+1] <== merklesum[0][j][i].sum;
-            hashNodes[0][j][i+1] <== merklesum[0][j][i].root;
-
-            switcherHash[1][j][i] = Switcher();
-            switcherHash[1][j][i].sel <== neighborsBinary[j][i];
-            switcherHash[1][j][i].L <== hashNodes[1][j][i];
-            switcherHash[1][j][i].R <== neighborsHash[j][i];
-
-            switcherSum[1][j][i] = Switcher();
-            switcherSum[1][j][i].sel <== neighborsBinary[j][i];
-            switcherSum[1][j][i].L <== sumNodes[1][j][i];
-            switcherSum[1][j][i].R <== neighborsSum[j][i];
-
-            merklesum[1][j][i] = MerkleSum();
-            merklesum[1][j][i].L <== switcherHash[1][j][i].outL;
-            merklesum[1][j][i].R <== switcherHash[1][j][i].outR;
-            merklesum[1][j][i].sumL <== switcherSum[1][j][i].outL;
-            merklesum[1][j][i].sumR <== switcherSum[1][j][i].outR;
-            
-            sumNodes[1][j][i+1] <== merklesum[1][j][i].sum;
-            hashNodes[1][j][i+1] <== merklesum[1][j][i].root;
+            hashNodes[1][j][i+1] <== merkleSumLevel[1][j][i].hashOut;
+            sumNodes[1][j][i+1] <== merkleSumLevel[1][j][i].sumOut;
         }
 
     // Assert value is in old temp hash

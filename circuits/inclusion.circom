@@ -1,7 +1,5 @@
 pragma circom 2.0.0;
 include "./merkle.circom";
-include "./utils.circom";
-include "../node_modules/circomlib/circuits/comparators.circom";
 
 // Define a template for inclusion proof circuit
 template inclusion(levels) {
@@ -18,13 +16,6 @@ template inclusion(levels) {
     signal input userBalance;
     signal input userHash;
 
-    // Define outputs
-    component merklesumi = MerkleSum();
-    merklesumi.L <== neighborsHash[0];
-    merklesumi.R <== userHash;
-    merklesumi.sumL <== neighborsSum[0];
-    merklesumi.sumR <== userBalance;
-
     signal output step_out[4];
     step_out[0] <== sum;
     step_out[1] <== rootHash; 
@@ -37,33 +28,21 @@ template inclusion(levels) {
     sumNodes[0] <== userBalance;
     hashNodes[0] <== userHash;
 
-    // Define switchers and Merkle sum components
-    component switcherHash[levels];
-    component switcherSum[levels];
-    component merklesum[levels];
+    // Define Merkle sum level components
+    component merkleSumLevel[levels];
 
     // Iterate through each level
     for (var i = 0; i < levels; i++) {
-        // Connect switchers and Merkle sum components
-        switcherHash[i] = Switcher();
-        switcherHash[i].sel <== neighborsBinary[i];
-        switcherHash[i].L <== hashNodes[i];
-        switcherHash[i].R <== neighborsHash[i];
-
-        switcherSum[i] = Switcher();
-        switcherSum[i].sel <== neighborsBinary[i];
-        switcherSum[i].L <== sumNodes[i];
-        switcherSum[i].R <== neighborsSum[i];
-
-        merklesum[i] = MerkleSum();
-        merklesum[i].L <== switcherHash[i].outL;
-        merklesum[i].R <== switcherHash[i].outR;
-        merklesum[i].sumL <== switcherSum[i].outL;
-        merklesum[i].sumR <== switcherSum[i].outR;
+        merkleSumLevel[i] = MerkleSumLevel();
+        merkleSumLevel[i].hashNode <== hashNodes[i];
+        merkleSumLevel[i].sumNode <== sumNodes[i];
+        merkleSumLevel[i].neighborHash <== neighborsHash[i];
+        merkleSumLevel[i].neighborSum <== neighborsSum[i];
+        merkleSumLevel[i].neighborBinary <== neighborsBinary[i];
 
         // Update sum and hash nodes
-        sumNodes[i+1] <== merklesum[i].sum;
-        hashNodes[i+1] <== merklesum[i].root;
+        hashNodes[i+1] <== merkleSumLevel[i].hashOut;
+        sumNodes[i+1] <== merkleSumLevel[i].sumOut;
     }
 
     // Assert root hash is valid

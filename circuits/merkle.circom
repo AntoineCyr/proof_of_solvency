@@ -1,5 +1,6 @@
 pragma circom 2.0.0;
 include "../node_modules/circomlib/circuits/mimcsponge.circom";
+include "./utils.circom";
 
 template MerkleSum() {
     signal input L;
@@ -11,7 +12,7 @@ template MerkleSum() {
 
     // Constants for MiMC sponge parameters
     var MIMC_INPUTS = 4;      // Number of inputs for hash (L, sumL, R, sumR)
-    var MIMC_ROUNDS = 220;    // Number of rounds for security 
+    var MIMC_ROUNDS = 220;    // Number of rounds for security
     var MIMC_OUTPUTS = 1;     // Single hash output
 
     component hasher = MiMCSponge(MIMC_INPUTS, MIMC_ROUNDS, MIMC_OUTPUTS);
@@ -22,5 +23,42 @@ template MerkleSum() {
     hasher.k <== 0;
     root <== hasher.outs[0];
     sum <== sumL + sumR;
+}
+
+// Combined Merkle sum level with switcher and binary constraint
+template MerkleSumLevel() {
+    signal input hashNode;
+    signal input sumNode;
+    signal input neighborHash;
+    signal input neighborSum;
+    signal input neighborBinary;
+
+    signal output hashOut;
+    signal output sumOut;
+
+    // Constrain neighborBinary to be binary (0 or 1)
+    neighborBinary * (neighborBinary - 1) === 0;
+
+    // Switch hash values based on neighborBinary
+    component switcherHash = Switcher();
+    switcherHash.sel <== neighborBinary;
+    switcherHash.L <== hashNode;
+    switcherHash.R <== neighborHash;
+
+    // Switch sum values based on neighborBinary
+    component switcherSum = Switcher();
+    switcherSum.sel <== neighborBinary;
+    switcherSum.L <== sumNode;
+    switcherSum.R <== neighborSum;
+
+    // Compute Merkle sum
+    component merklesum = MerkleSum();
+    merklesum.L <== switcherHash.outL;
+    merklesum.R <== switcherHash.outR;
+    merklesum.sumL <== switcherSum.outL;
+    merklesum.sumR <== switcherSum.outR;
+
+    hashOut <== merklesum.root;
+    sumOut <== merklesum.sum;
 }
 

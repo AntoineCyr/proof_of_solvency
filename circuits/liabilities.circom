@@ -3,24 +3,19 @@ include "./merkle.circom";
 include "./utils.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 
+//Propose flaws, alternaties, optimizations and simplifications
+//Nice readme to present.
+//Potential improvements
+
+
 // Define a template for a Merkle tree circuit
-template sumMerkleTree(levels, inputs) {
+template sumMerkleTree(levels) {
     // Constants for balance validation
     var DEFAULT_MAX_BALANCE_BITS = 100;  // Maximum bits for balance (supports up to 2^100)
     // Validate template parameters at compile time
     assert(levels > 0 && levels <= 32);  // Reasonable bounds for tree depth
-    assert(inputs > 0 && inputs <= 2**20);  // Reasonable bounds for inputs
-    
-    // Ensure the number of inputs is a power of 2
-    var isPowerOf2 = 1;
-    var temp = inputs;
-    while (temp > 1) {
-        if (temp % 2 == 1) {
-            isPowerOf2 = 0;
-        }
-        temp = temp \ 2;
-    }
-    assert(isPowerOf2 == 1);  // inputs must be power of 2
+
+    var inputs = 2 ** levels;
     
     // Define input signals for balances and user hashes
     signal input balance[inputs];
@@ -84,4 +79,4 @@ template sumMerkleTree(levels, inputs) {
 }
 
 // Instantiate the main component
-component main = sumMerkleTree(2, 4);
+component main = sumMerkleTree(2);
