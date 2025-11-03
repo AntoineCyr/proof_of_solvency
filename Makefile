@@ -1,6 +1,9 @@
 test: ## run tests
 	cd circuits/test && ../../node_modules/.bin/mocha *.js
 
+mimc: ## compute merkle tree hashes using MiMC
+	node MiMC.js
+
 clean: ## clean compiled circuits
 	rm -rf circuits/compile/
 

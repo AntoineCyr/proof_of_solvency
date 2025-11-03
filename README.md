@@ -1,110 +1,101 @@
 # Proof of Solvency
 
-This project demonstrates the integration of the Nova folding scheme with proof of solvency circuits to significantly reduce the computational workload required for verifying multiple Merkle sum trees and balance inclusions.
+Zero-knowledge proof system demonstrating proof of solvency using Merkle sum trees and Nova folding scheme integration to reduce proving time by 10x.
 
-## Circuits Description
+## Project Structure
 
-### Liabilities
+- **[circuits/](circuits/)** - Circom circuit implementations
+- **[nova/](nova/)** - Nova folding scheme examples and integration with circuits
+- **[nova-scotia/](nova-scotia/)** - Dependency (should be migrated to linked dependency)
 
-The proof of liabilities operates on a list of balances and a list of email hashes as private inputs. The main purposes of the circuit are:
+## Circuits
 
-1. **Validation:** Ensure all values are non-negative and fall within a specified range to prevent overflow or underflow issues, given that the operations occur within a finite field.
-2. **Merkle Tree Construction:** Construct a Merkle sum tree and output the total balance sum and the root hash of the Merkle tree.
+### 1. **liabilities**
+Constructs a Merkle sum tree from user balances and email hashes.
 
+**Inputs:** List of user's balance
 
-### Inclusion
+**Outputs:** Total sum and root hash
 
-The proof of inclusion aims to prove that the balance of a user is included in the Merkle Tree created in the proof of liabilities. To prove that a balance is included, it is sufficient to show that you know the Merkle path of a user balance.
+**Constraints:**
+- Input range check
+- Tree construction
 
-#### Example
-
-Below is a visualization of a Merkle sum tree. Each node contains a hash and the sum of balances in its subtree:
-
-<p align="center">
-  <img src="MerklePath.png" alt="Merkle Sum Tree">
-</p>
-
-This diagram shows a Merkle sum tree with 4 users and a total of 100 BTC in liabilities.
-
-
-#### Merkle Path Example
-
-In the diagram above, to prove inclusion of node **R1** (User2 with 10 BTC), we provide the Merkle path consisting of the sibling nodes:
-- **L1** (User1, 29 BTC) - sibling at leaf level
-- **R3** (61 BTC) - sibling at intermediate level
-
-**Verification Process:**
-1. Start with target leaf R1: `Hash(User2)` with balance 10 BTC
-2. Combine with sibling L1: `Hash(L1, R1)` → produces L3 with sum 39 BTC (29 + 10)
-3. Combine L3 with sibling R3: `Hash(L3, R3)` → produces root with sum 100 BTC (39 + 61)
-4. Verify the computed root matches the expected root hash ✓
-5. Verify the total sum equals the claimed total liabilities ✓
-
-
-
-### Liabilities Changes
-
-Once we have the initial tree proved, we can generate a proof of the changes to reduce the workload. Each change require only 1 merkle path, and is similar to the inclusion circuit. We first prove that the initial_value + path = old_state, and then new_value + path = new_state.
-
-### Nova Folding Scheme Circuits
-
-To implement folding, we slightly adjust the way we build the changes circuit. Everything except the way we handle inputs and outputs stays the same. The private inputs vary for every instance, while the public inputs are carried over from round to round.
+### 2. **inclusion**
+Proves a user's balance is included in the Merkle sum tree via Merkle path verification.
 
 <p align="center">
-  <img src="FoldingCircuit.png" alt="Folding circuit">
+  <img src="MerklePath.png" alt="Merkle Sum Tree" width="600">
 </p>
 
-**Legend:**
-- **F**: Circuit function applied at each folding step
-- **S**: Step in/out - values shared between each fold (public inputs/outputs)
-- **T**: Step-specific inputs - unique inputs for each folding step (public or private)
+**Inputs:**
+- User node
+- Root hash, sum
+- Merkle path (private)
 
+### 3. **liabilities_changes**
+Proves state transitions by verifying both old and new Merkle paths for balance updates.
 
+**Process:** `old_value + path = old_state` -> `new_value + path = new_state`
 
-Using the Nova folding scheme, we can prove the balance of a user is included at multiple points in time. For instance, we can have 365 steps, one for each day, to prove that the balance of the user was included every day in the last year.
+### 4. **liabilities_changes_folding**
+Adapted for Nova folding scheme with modified input/output handling. Public inputs carry over between folds while private inputs vary per instance.
 
+<p align="center">
+  <img src="FoldingCircuit.png" alt="Folding Circuit" width="500">
+</p>
 
-### Compile, integrate and test
+**Legend:** F=Circuit function, S=Step in/out (public), T=Step inputs (private)
 
-When running integrations test, you have to be careful which circuit version is compiled. Depending on the size of your tree
-and the number of changes, your number of inputs will change. You have to modify the tests accordingly.
+**Use case:** Prove daily balance inclusions with a single succinct proof.
 
-## Run the Circuits Tests
+## Testing
 
+### Circuit Tests (Circom)
 ```sh
 make test
 ```
+Runs mocha tests for all circuits: [liabilitiesTest.js](circuits/test/liabilitiesTest.js), [inclusionTest.js](circuits/test/inclusionTest.js), [liabilitiesChange.js](circuits/test/liabilitiesChange.js), [liabilitiesChangeFolding.js](circuits/test/liabilitiesChangeFolding.js)
 
-## Compile the Circuits for Nova
-
+### Nova Integration Tests
 ```sh
-make compile
+make compile    # Compile circuits for Nova (vesta/bn128 fields)
+make nova-test  # Run integration tests
 ```
 
-## Nova integration tests
+Runs: `cargo run liabilities` and `cargo run inclusion` in [nova/](nova/) directory
 
+## Hash Visualization
+
+**Important:** Nova and Circom use different field sizes, producing different hash values.
+
+**Circom (bn128):** Use [MiMC.js](MiMC.js)
 ```sh
-make nova-test
+make mimc
 ```
 
-### Additional Information
+**Nova (vesta):** Use [merkle_sum_proof](https://github.com/AntoineCyr/merkle_sum_proof) repo
 
-For a more in-depth understanding of the circuits, including performance and optimization analysis, please refer to my upcoming thesis.
+## Performance
 
-### Warning
-
-Nova do not use the same field size as circom. This causes hash values to be different in the 2 tests we are running (simple circom tests vs nova integration test).
-To visualize the hash values of your tree in circom, you can use the MiMC.js file of this repo.
-For Nova, you can use this other repo that I created: https://github.com/AntoineCyr/merkle_sum_proof
-The nova integration uses this repo to build the tree.
-
-
-### Benchmarks
-
-#### Liabilities circuit 
-
-There is an initial cost to folding, however the cost after some time converges to 10x better.
+Folding reduces proof costs by ~10x after convergence:
 
 <p align="center">
-  <img src="ProofTime.png" alt="Proof Time">
+  <img src="ProofTime.png" alt="Proof Time Benchmark" width="550">
 </p>
+
+## Notes
+
+- Tree depth and number of changes must match between circuit compilation and tests
+- Modify template parameters in circuit files based on your use case (default: 2 levels, 1 change)
+
+## Potential Improvements
+
+**1. Parameterized Circuit Testing & Configuration**
+- Currently, tree levels and changes are hardcoded (`component main = sumMerkleTree(2)`) requiring manual test updates
+- Add config-driven build: `make compile-liabilities LEVELS=4 CHANGES=3` generates circuits and matching test fixtures
+- Enable multi-level test matrix (4, 16, 64, 256 leaves) with automated performance benchmarking
+
+**2. Unified Hash Computation**
+- Integrate [merkle_sum_proof](https://github.com/AntoineCyr/merkle_sum_proof) repo to provide consistent hash calculation for both Circom (bn128) and Nova (vesta)
+- Replace separate [MiMC.js](MiMC.js) with unified tooling
